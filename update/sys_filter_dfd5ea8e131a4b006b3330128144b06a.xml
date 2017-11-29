@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update sys_domain="global" table="sys_filter">
+    <sys_filter action="INSERT_OR_UPDATE">
+        <filter table="sys_user">nameSTARTSWITHJonathan^nameISNOTEMPTY^EQ<item endquery="false" field="name" goto="false" newquery="false" operator="STARTSWITH" or="false" value="Jonathan"/>
+            <item endquery="false" field="name" goto="false" newquery="false" operator="ISNOTEMPTY" or="false" value=""/>
+            <item endquery="true" field="" goto="false" newquery="false" operator="=" or="false" value=""/>
+        </filter>
+        <group/>
+        <last_used>2017-11-09 15:47:38</last_used>
+        <mobile>true</mobile>
+        <roles/>
+        <sys_class_name>sys_filter</sys_class_name>
+        <sys_created_by>bamini_adm</sys_created_by>
+        <sys_created_on>2017-11-09 15:47:38</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>dfd5ea8e131a4b006b3330128144b06a</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>mobile</sys_name>
+        <sys_package display_value="Performance &amp; Development Review" source="x_pdm_pdr">5c227acc13b50bc0995fb6d96144b0f9</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Performance &amp; Development Review">5c227acc13b50bc0995fb6d96144b0f9</sys_scope>
+        <sys_update_name>sys_filter_dfd5ea8e131a4b006b3330128144b06a</sys_update_name>
+        <sys_updated_by>bamini_adm</sys_updated_by>
+        <sys_updated_on>2017-11-09 15:47:38</sys_updated_on>
+        <table>sys_user</table>
+        <title>mobile</title>
+        <user display_value="Bob Amini">faa4c21913460300995fb6d96144b0d6</user>
+    </sys_filter>
+</record_update>

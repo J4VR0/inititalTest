@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_pdm_pdr.PDRMaster</api_name>
+        <client_callable>false</client_callable>
+        <description>Master controller for Performance &amp; Development Review</description>
+        <name>PDRMaster</name>
+        <script><![CDATA[var PDRMaster = Class.create();
+PDRMaster.prototype = {
+	initialize: function() {
+	},
+	
+	getPrevEval : function(employee, fGoals, evalYr, evalGr) {
+		
+		//If previous year evaluation is provided, loop through all the previous years SMART goals into an array
+		var gArray = [];
+		var lineBreak1 = '\n -------------------------------- \n';
+		var lineBreak2 = '\n\n -------------------------------- \n';
+		if(fGoals != ''){
+			var arr = fGoals.split(',');
+			var str = '';
+			var tmpGl, tmpMs,tmpEt, tmpDd, tmpCm, tmpWt;
+			
+			for (var i=0; i < arr.length; i++) {
+				var nbr = arr[i].split(':');
+				var fg = new GlideRecord('u_pe_future_goal_' + nbr[1]);
+				if(fg.get(nbr[0])){
+					tmpGl = this.validate(fg.getValue('u_fg_goal_' + nbr[1]));
+					tmpMs = this.validate(fg.getValue('u_fg_measurement_' + nbr[1]));
+					tmpEt = this.validate(fg.getValue('u_fg_results_' + nbr[1]));
+					tmpDd = this.validate(fg.getValue('u_fg_due_date_' + nbr[1]));
+					tmpCm = this.validate(fg.getValue('u_fg_competency_' + nbr[1]));
+					tmpWt = this.validate(fg.getValue('u_fg_weight_' + nbr[1]));
+
+				}
+				str = 'SMART Goal: ' + tmpGl.trim() + lineBreak1 + 'Measurement: ' + tmpMs.trim() + lineBreak1 + 'Expected Year-End Results: ' + tmpEt.trim() + lineBreak1 + 'Due Date: ' + tmpDd.trim() + lineBreak1 + 'Competency: ' + tmpCm.trim() +  '\r' + '@' + tmpWt;
+				gArray.push(str);
+			}
+			this.createEval(employee, evalYr, gArray);
+		}else{
+			this.createEval(employee, evalYr, '');
+		}
+	},
+	
+	validate: function(value){
+		if(!value)
+			return '';
+		else return value;
+	},
+	
+	createEval : function(employee, evalYr, sGoal){
+		
+		var newEval = new GlideRecord('u_performance_evaluation');
+		newEval.addQuery('u_employee_name', employee);
+		newEval.addQuery('u_parent', evalYr);
+		newEval.query();
+		if(!newEval.next()){
+			//Get user attributes
+			var gUsr = new GlideRecord('sys_user');
+			gUsr.get(employee);
+			var usrDept = gUsr.department.sys_id;
+			var usrMgr = gUsr.manager.sys_id;
+			var usrBU = gUsr.u_bus_unit.u_value;
+			
+			
+			//Create new performance evaluation
+			newEval.initialize();
+			newEval.u_parent = evalYr;
+			newEval.u_department = usrDept;
+			newEval.u_manager = usrMgr;
+			newEval.u_second_level_manager = gUsr.manager.manager;
+			newEval.u_employee_name = employee;
+			newEval.setValue('u_status','1');
+			newEval.u_employee_is_active = 'Yes';
+			newEval.u_regional_hr_admin_group = usrBU;
+			var evalSysid = newEval.insert();
+			
+			this.createGoals(evalSysid, sGoal);
+		}else{
+			this.createGoals(newEval.sys_id, sGoal);
+		}
+		
+	},
+	
+	createGoals : function(evalGr, smGoals){
+		var pe = new GlideRecord('u_performance_evaluation');
+		pe.addQuery('sys_id', evalGr);
+		pe.query();
+		if(pe.next()){
+			
+			if(smGoals != ''){
+				
+				// This function creates the relating 5 Smart Goals on the Performance Evaluation tab
+				for (var i=0; i < smGoals.length; i++) {
+					var tbl = i + 1;
+					var smg = new GlideRecord('u_pe_smart_goal_' + tbl);
+					smg.addQuery('u_parent', evalGr);
+					smg.query();
+					if(!smg.next()){
+						smg.initialize();
+						smg.u_parent  = evalGr;
+						
+						if(i==0){
+							var str = smGoals[i].split("@");
+							var gStr1 = str[0];
+							var g1 = gStr1.replace(/[\n\r]+/g, '');
+							if(g1.length > 210){     //if future goal contains value, we paste value else we leave goal empty
+								smg.u_sg_goal_1 = str[0];
+								pe.u_goal_weight_1 = str[1];
+							}
+							var smgid = smg.insert();
+							pe.u_smart_goal_1 = smgid;
+						}else if(i==1){
+							var str = smGoals[i].split("@");
+							var gStr2 = str[0];
+							var g2 = gStr2.replace(/[\n\r]+/g, '');
+							if(g2.length > 210){     //if future goal contains value, we paste value else we leave goal empty
+								smg.u_sg_goal_2 = str[0];
+								pe.u_goal_weight_2 = str[1];
+								pe.u_add_goal_2 = 'true';
+							}
+							var smgid = smg.insert();
+							pe.u_smart_goal_2 = smgid;
+						}else if(i==2){
+							var str = smGoals[i].split("@");
+							var gStr3 = str[0];
+							var g3 = gStr3.replace(/[\n\r]+/g, '');
+							if(g3.length > 210){     //if future goal contains value, we paste value else we leave goal empty
+								smg.u_sg_goal_3 = str[0];
+								pe.u_goal_weight_3 = str[1];
+								pe.u_add_goal_3 = 'true';
+							}
+							var smgid = smg.insert();
+							pe.u_smart_goal_3 = smgid;
+						}else if(i==3){
+							var str = smGoals[i].split("@");
+							var gStr4 = str[0];
+							var g4 = gStr4.replace(/[\n\r]+/g, '');
+							if(g4.length > 210){     //if future goal contains value, we paste value else we leave goal empty
+								smg.u_sg_goal_4 = str[0];
+								pe.u_goal_weight_4 = str[1];
+								pe.u_add_goal_4 = 'true';
+							}
+							var smgid = smg.insert();
+							pe.u_smart_goal_4 = smgid;
+							
+						}else if(i==4){
+							var str = smGoals[i].split("@");
+							var gStr5 = str[0];
+							var g5 = gStr5.replace(/[\n\r]+/g, '');
+							if(g5.length > 210){     //if future goal contains value, we paste value else we leave goal empty
+								smg.u_sg_goal_5 = str[0];
+								pe.u_goal_weight_5 = str[1];
+								pe.u_add_goal_5 = 'true';
+							}
+							var smgid = smg.insert();
+							pe.u_smart_goal_5 = smgid;
+						}
+					}
+				}
+			}else{
+				var smTbl = 6;
+				for (x = 1; x < smTbl; x++) {
+					var smg = new GlideRecord('u_pe_smart_goal_'+ x);
+					smg.initialize();
+					smg.u_parent  = evalGr;
+					var smgid = smg.insert();
+					
+					switch(x){
+						case 1: pe.u_smart_goal_1 = smgid;
+						break;
+						case 2: pe.u_smart_goal_2 = smgid;
+						break;
+						case 3: pe.u_smart_goal_3 = smgid;
+						break;
+						case 4: pe.u_smart_goal_4 = smgid;
+						break;
+						case 5: pe.u_smart_goal_5 = smgid;
+						break;
+					}
+				}
+				
+			}
+			
+			pe.update();
+		}
+		
+		/* PDR v1.0 - Overwritten
+		// This function creates the relating 5 Competencies on the Performance Evaluation tab
+		var arry = ['u_pe_comp_customer_focus','u_pe_comp_team_work','u_pe_comp_driving_change','u_pe_comp_business_acumen','u_pe_comp_results_focused'];
+		for (i = 0; i < arry.length; i++) {
+			var tbl = arry[i];
+			var cmp = new GlideRecord(tbl);
+			cmp.addQuery('u_parent', evalGr);
+			cmp.query();
+			if(!cmp.next()){
+				cmp.initialize();
+				cmp.u_parent = evalGr;
+				var cmpid = cmp.insert();
+			}
+			if(tbl == 'u_pe_comp_customer_focus')
+				pe.u_comp_customer_focus = cmpid;
+			if(tbl == 'u_pe_comp_team_work')
+				pe.u_comp_team_work = cmpid;
+			if(tbl == 'u_pe_comp_driving_change')
+				pe.u_comp_driving_change = cmpid;
+			if(tbl == 'u_pe_comp_business_acumen')
+				pe.u_comp_business_acuman = cmpid;
+			if(tbl == 'u_pe_comp_results_focused')
+				pe.u_comp_results_focus = cmpid;
+		}*/
+		this._includeCompetencies(pe);
+		
+		pe.update();
+		// This function creates the relating 5 Future Goals on the Set Smart Goals tab
+		var tbl = 6;
+		for (i = 1; i < tbl; i++) {
+			var fg = new GlideRecord('u_pe_future_goal_'+ i);
+			fg.addQuery('u_parent', evalGr);
+			fg.query();
+			if(!fg.next()){
+				fg.initialize();
+				fg.u_parent  = evalGr;
+				var fgid = fg.insert();
+			}
+			if(i == 1)
+				pe.u_future_sg_1 = fgid;
+			if(i == 2)
+				pe.u_future_sg_2 = fgid;
+			if(i == 3)
+				pe.u_future_sg_3 = fgid;
+			if(i == 4)
+				pe.u_future_sg_4 = fgid;
+			if(i == 5)
+				pe.u_future_sg_5 = fgid;
+		}
+		pe.update();
+		
+		// This function creates the relatinig Development plan record on the Development plan tab
+		var tbl = 7;
+		for (i = 1; i < tbl; i++) {
+			var dev = new GlideRecord('u_pe_development_goal_'+ i);
+			dev.addQuery('u_parent', evalGr);
+			dev.query();
+			if(!dev.next()){
+				dev.initialize();
+				dev.u_parent  = evalGr;
+				var devid = dev.insert();
+				
+				if(i == 1)
+					pe.u_dev_plan_1 = devid;
+				if(i == 2)
+					pe.u_dev_plan_2 = devid;
+				if(i == 3)
+					pe.u_dev_plan_3 = devid;
+				if(i == 4)
+					pe.u_dev_plan_4 = devid;
+				if(i == 5)
+					pe.u_dev_plan_5 = devid;
+				if(i == 6)
+					pe.u_dev_plan_6 = devid;
+			}
+			
+		}
+		
+		// This function creates the relatinig Comment record on the Comments tab
+		var com = new GlideRecord('u_pe_comments');
+		com.addQuery('u_parent', evalGr);
+		com.query();
+		if(!com.next()){
+			com.initialize();
+			com.u_parent  = evalGr;
+			var comid = com.insert();
+			pe.u_pe_comment = comid;
+		}
+		
+		pe.update();
+		
+	},
+	
+	_includeCompetencies: function(pe){
+		
+		var hrprof = new GlideRecord('sn_hr_core_profile');
+		hrprof.addQuery('user', pe.u_employee_name);
+		hrprof.query();
+		
+		if(hrprof.next()){
+			var mgmLvl = hrprof.position.u_management_level.u_value;
+			var stringQuery = 'management_level=NULL^NQdefault=true';
+			
+			if(mgmLvl)
+				stringQuery = 'management_level.u_value>=' + mgmLvl;
+			
+			var compCount = new GlideAggregate('x_pdm_pdr_competencies');
+			compCount.addEncodedQuery(stringQuery);
+			compCount.addAggregate('COUNT');
+			compCount.query();
+			
+			if(compCount.next()){
+				var count = compCount.getAggregate('COUNT');
+				
+				var evalComp = new GlideRecord('x_pdm_pdr_competencies');
+				evalComp.addEncodedQuery(stringQuery);
+				evalComp.orderBy('name');
+				evalComp.query();
+				
+				for(i=1;evalComp.next(); i++){
+					
+					var weight = (100 / count).toFixed(2);
+					if(i == count)
+						weight = (100 - ( weight * (count -1))).toFixed(2);
+					
+					var pdrComp = new GlideRecord('x_pdm_pdr_evaluation_competencies');
+					
+					pdrComp.initialize();
+					
+					pdrComp.parent = pe.getUniqueValue();
+					pdrComp.competency = evalComp.getUniqueValue();
+					pdrComp.weight = weight;
+					
+					pdrComp.insert();
+				}
+			}else{
+				gs.logError('No competencies found for: ' + pe.u_employee_name.getDisplayValue() + ', Level of management: ' + mgmLvl,'PDRMaster');
+			}
+		}else {
+			gs.logError('No HR Profile found for: ' + pe.u_employee_name.getDisplayValue(),'PDRMaster');
+		}
+		
+	},
+	
+	deleteRelatedEval : function(parent, parentName){
+		var cnt = 0;
+		var ev = new GlideRecord('u_performance_evaluation');
+		ev.addQuery('u_parent', parent);
+		ev.query();
+		while(ev.next()){
+			cnt++;
+			ev.deleteRecord();
+		}
+		gs.addInfoMessage('Evaluation Parent: ' + parentName + ' and ' + cnt + ' related performance evaluations has been deleted.');
+	},
+	type: 'PDRMaster'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>jonathanv_adm</sys_created_by>
+        <sys_created_on>2017-10-09 18:33:26</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_id>3c22e3c413390bc0995fb6d96144b0b1</sys_id>
+        <sys_mod_count>12</sys_mod_count>
+        <sys_name>PDRMaster</sys_name>
+        <sys_package display_value="Performance &amp; Development Review" source="x_pdm_pdr">5c227acc13b50bc0995fb6d96144b0f9</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Performance &amp; Development Review">5c227acc13b50bc0995fb6d96144b0f9</sys_scope>
+        <sys_update_name>sys_script_include_3c22e3c413390bc0995fb6d96144b0b1</sys_update_name>
+        <sys_updated_by>jonathanv_adm</sys_updated_by>
+        <sys_updated_on>2017-10-12 15:45:51</sys_updated_on>
+    </sys_script_include>
+</record_update>

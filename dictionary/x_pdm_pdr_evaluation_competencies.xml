@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database>
+    <element label="Evaluation Competencies" max_length="40" name="x_pdm_pdr_evaluation_competencies" type="collection">
+        <element label="Employee Appraisal" max_length="2000" name="appraisal_emp" type="string"/>
+        <element label="Manager Appraisal" max_length="2000" name="appraisal_man" type="string"/>
+        <element label="Manager (dotted line) Appraisal" max_length="2000" name="appraisal_man_dot" type="string"/>
+        <element label="Competency" max_length="32" name="competency" reference="x_pdm_pdr_competencies" type="reference"/>
+        <element default="javascript:getNextObjNumberPadded();" display="true" dynamic_default_value="fdcb83a85f220100a9ad2572f2b4773c" label="Number" max_length="40" name="number" type="string" use_dynamic_default="true"/>
+        <element label="Evaluation" max_length="32" name="parent" reference="u_performance_evaluation" type="reference"/>
+        <element label="Rating" max_length="40" name="rating" type="integer"/>
+        <element label="Weight" max_length="20" name="weight" read_only="true" type="decimal"/>
+        <index name="index">
+            <element name="parent"/>
+        </index>
+        <index name="index2">
+            <element name="competency"/>
+        </index>
+    </element>
+</database>

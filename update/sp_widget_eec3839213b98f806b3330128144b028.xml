@@ -1,0 +1,1166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <client_script><![CDATA[function(spUtil, $uibModal, $scope, $timeout) {
+
+	var c = this;
+
+	c.competency = {};
+
+	c.openModal = function(competency){
+		c.competency = competency;
+		c.modalInstance = $uibModal.open({
+			templateUrl: 'compModal',
+			scope:$scope,
+			size: 'lg'			
+		});
+	};
+
+	c.closeModal = function(){
+		c.modalInstance.close();
+	};
+	
+	c.mandatory_filled= function(field){
+		console.log('value: ' + field);
+		var answer = false;
+		
+		if(field)
+			answer = true;
+		
+		console.log('answer:' + answer);
+		
+		return answer;
+	};
+
+	c.resize = function($event){
+		var sHeight = $event.target.scrollHeight;		
+		
+		if(sHeight > 38)
+			$event.target.style.height = (sHeight) + "px";
+		else
+			$event.target.style.height = '38px';
+	};
+		
+	c.updateWeightedRatingAvg = function(items){
+		//g_form.addInfoMessage('Updating Rating');
+		var rating = 0;
+		for(var x in items){
+					var iWeight = items[x].weight/100 || 0;
+			    var iRating = items[x].rating || 0;
+					console.log('item ' + x + ': ' + iWeight + ' * ' + iRating);
+			    rating += (iWeight * iRating);
+		}
+		
+		return rating.toFixed(2);
+
+	};
+
+	c.updateBasicRatingAvg = function(items){
+		//g_form.addInfoMessage('Updating Rating');
+		var rating = 0;
+		var count = 0;
+		for(var x in items){
+			    var iRating = items[x].rating || 0;
+				console.log('item ' + x + ':' + iRating);
+			    rating += iRating;
+				count += 1;
+		}
+		
+		if(count > 0) {rating = rating/count;}
+		
+		return rating.toFixed(2);
+	};
+	
+	/*
+	c.getUIActions = function(type) {
+		console.log(c.data.f._ui_actions);
+		if (c.data.disableUIActions)
+			return [];
+		if (type) {
+			return c.data.f._ui_actions.filter(function(action) {
+				//We handle the primary action button separately.
+				return !action.primary && action['is_' + type];
+			});
+		} else {
+			return c.data.f._ui_actions;
+		}
+	};
+	*/
+
+	c.getPrimaryAction = function() {
+		return 'Save';
+	};
+	
+	triggerUIAction = function(action) {
+		if (c.data.disableUIActions)
+			return;
+
+		if (g_form) {
+			$timeout(function() {
+				g_form.submit(action.action_name || action.sys_id);
+			});
+		}
+	};
+
+	c.uiAction = function(action) {
+		
+		// TODO add code here to perform validations on action==Save
+		// spcifically, throw an error to the user if any of the date fields are invalid
+
+		console.log('button='+action);
+		if(action == 'route') {
+			performRoute(c.data);
+		}
+		if(action == 'save') {
+			performSave(c.data);
+		}
+		if(action == 'load') {
+			performLoad(c.data);
+		}
+		
+
+	};
+
+	checkData = function() {
+
+		console.log('After update...:');
+		console.log('...status:'+c.data.currentStatus);
+		console.log('...User  :'+c.data.sysUserID);
+		console.log('...Empl  :'+c.data.empRef);
+		console.log('...Mgr   :'+c.data.mgrRef);
+		console.log('...FMgr  :'+c.data.funcMgrRef);
+		console.log('...2ndLvl:'+c.data.secLvlMgrRef);
+		console.log('...access:'+c.data.usrCanSave);
+
+		console.log('saveFlag =' + c.data.usrCanSave);
+		var ztmpSaveFlag = c.data.usrCanSave;
+		c.data.usrCanSave = ztmpSaveFlag;
+		console.log('saveFlag =' + ztmpSaveFlag);
+		console.log('saveFlag =' + c.data.usrCanSave);
+	};
+
+	// function to perform load
+	performLoad = function(dr) {
+		dr.action = 'load';
+		c.server.update().then(function() {checkData(); dr.action = undefined; /*c.server.refresh();*/ });
+
+	};
+
+	
+	// function to perform route
+	performRoute = function(dr) {
+		dr.action = 'route';
+		c.server.update().then(function() {checkData(); dr.action = undefined; });
+
+	};
+	
+	// function to perform save
+	performSave = function(dr) {
+
+		var rslt = '';
+			
+		rslt = validateDateFields(dr);
+		
+		if(rslt == '') {
+			dr.action = 'save';
+			c.server.update().then(function() {checkData(); dr.action = undefined;});
+		}
+		else {
+			alert(rslt);
+		}
+	};
+	
+	// function to validate date fields
+	validateDateFields = function (dr) {
+
+		//init error list
+		console.log('Validating Date Fields');
+		var rs = '';
+		//Loop through future goals and check dates
+
+		//Loop through future goals and check dates
+		dr.fGoals.forEach(function(element) {
+			if(element.dueDate && element.showing && !(RegExp(dr.dateValidationPattern).test(element.dueDate))) {
+				console.log(element.fldName+' is bad ('+element.dueDate+')');
+				rs += 'Invalid date ('+element.dueDate+') for ' + element.fldName + '\n';
+			}
+		});
+
+		//Loop through development plans and check dates
+		dr.devPlans.forEach(function(element) {
+			if(element.dueDate && element.showing && !(RegExp(dr.dateValidationPattern).test(element.date))) {
+				console.log(element.fldName+' is bad ('+element.dueDate+')');
+				rs += 'Invalid date ('+element.dueDate+') for ' + element.fldName + '\n';
+			} 
+		});
+
+		return rs;
+	};
+}
+]]></client_script>
+        <controller_as>c</controller_as>
+        <css>li{
+	font-size: 1.25em;
+}
+
+.pdr-year{
+	font-size: 2em;
+}
+
+li a.pdr-li{
+  line-height: 1;
+	background-color: #005595;
+  color: white;
+  margin: 3px;
+  padding: 5px;
+}
+
+li a.pdr-li:hover{
+	background-color: #7f8184;
+
+}
+
+.pdr-content{
+	width:100%;
+  padding: 0px;
+}
+
+.cate-title{
+	margin: 10px 0px 10px;
+}
+
+.rating-panel{
+  position: absolute;
+  right: 25px;
+  display: inline;
+  line-height: 1;
+}
+
+span.rating{
+  font-size: 1.5em;
+  padding: 0px 5px;
+  font-weight: bold;
+}
+
+table.add-remove{
+	width: 100%;
+}
+
+p.add-option{
+	text-align: center;
+}
+
+.md-block{
+	display: block;
+}
+
+label{
+	padding-top: 5px;
+  padding-right: 5px;
+}
+
+textarea{
+	display: block;
+  width: 100%;
+  height:auto;
+  white-space: pre-line;
+  border-radius:3px;
+  border-style: solid;
+  border-color: rgb(180, 180, 180);  
+  border-width: 1px;
+  resize: none;
+  overflow: hidden;
+
+}
+
+textarea[readonly] {
+    background-color: rgb(240, 240, 240);
+}
+
+.item-footer {
+	background-color:  #f6f1ed;
+  
+}
+
+.item-heading{
+	background-color: #f6f1ed;
+  
+}
+</css>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>false</has_preview>
+        <id>pdr-content</id>
+        <internal>false</internal>
+        <link/>
+        <name>PDR Content</name>
+        <option_schema/>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[(function() {
+
+	if(!input) {  //runs when first widget first opens.  Init variables and load relevant data to be presented to user
+
+		console.log('first load');
+
+		// Initialize data 
+		data.dateValidationPattern = '^(?:(?:0[1,3,5,7,8]|1[0,2])(\\/|-|\\.|[ ])(?:31)\\1|^(?:0[1,3-9]|1[0-2])(\\/|-|\\.|[ ])(?:29|30)\\2)(?:(?:1[6-9]|[2-9]\\d)\\d{2})$|^(?:(?:02)(\\/|-|\\.|[ ])(?:29)\\3(?:(?:(?:1[6-9]|[2-9]\\d)(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:(?:0[1-9])|(?:1[0-2]))(\\/|-|\\.|[ ])(?:0[1-9]|1\\d|2[0-8])\\4(?:(?:1[6-9]|[2-9]\\d)\\d{2})$';
+
+		data.pdrID = $sp.getParameter("sys_id");
+		data.table = "u_performance_evaluation";
+		disableUIActions = false;
+		data.greval = new GlideRecord(data.table);
+		data.userExists = data.greval.get(data.pdrID);
+
+		// load data from source forms
+		if (data.userExists) {
+			
+			loadPDRData(data);
+			
+		}
+	}
+	else { //runs everytime other than when the widget is first opened. Determine nature of request and process accordingly
+		
+		console.log('not first load');
+		
+		if (input && input.action) {
+			var action = input.action;
+			console.log('action: '+action);
+						
+			// Re-establish link to the base table record
+			console.log('pdrID='+input.pdrID);
+			console.log('table='+input.table);
+			input.greval = new GlideRecord(input.table);
+			input.userExists = input.greval.get(input.pdrID);
+			console.log('record found=='+input.userExists);
+			
+			data.greval = input.greval;
+			data.userExists = input.userExists;
+			data.table = input.table;
+			data.pdrID = input.pdrID;
+			
+			// save new values to performance evaluation record and related records
+			if(action == 'save') {
+				
+				updatePDRRecord(input);
+				
+			}
+			// perform Route action
+			else if(action == 'route') {
+				
+				//run Route action 
+				routePDRRecord(input);
+				
+				//reload data, since the route action invokes 
+				//server-side scripts that might alter the underlying data
+				loadPDRData(data);
+				
+				// gs.addInfoMessage("PDR Routed"); // unnecessary, the business rule on the main form provides feedback
+			}
+			else if(action == 'load')
+			{
+				loadPDRData(data);
+			}
+		}
+
+		console.log('After load...:');
+		console.log('..DATA..:');
+		console.log('...status:'+data.currentStatus);
+		console.log('...User  :'+data.sysUserID);
+		console.log('...Empl  :'+data.empRef);
+		console.log('...Mgr   :'+data.mgrRef);
+		console.log('...FMgr  :'+data.funcMgrRef);
+		console.log('...2ndLvl:'+data.secLvlMgrRef);
+		console.log('...access:'+data.usrCanSave);
+		console.log('..INPUT..:');
+		console.log('...status:'+input.currentStatus);
+		console.log('...User  :'+input.sysUserID);
+		console.log('...Empl  :'+input.empRef);
+		console.log('...Mgr   :'+input.mgrRef);
+		console.log('...FMgr  :'+input.funcMgrRef);
+		console.log('...2ndLvl:'+input.secLvlMgrRef);
+		console.log('...access:'+input.usrCanSave);
+
+		// Done.
+		
+	}
+
+	
+	function loadPDRData(pdrRec) {
+		console.log('load data');
+		
+		// get calculated and aggregate values
+		pdrRec.sysUserID = pdrRec.greval.getValue("u_employee_name");
+		
+		if (!pdrRec.sysUserID)
+			 pdrRec.sysUserID = gs.getUser().getID();
+		
+		pdrRec.year = parseInt(pdrRec.greval.getDisplayValue('u_parent').substring(0,4));
+		pdrRec.nextYear = pdrRec.year + 1;
+		pdrRec.rating_goals = parseFloat(pdrRec.greval.getValue('u_smart_goals_average')).toFixed(2);
+		pdrRec.rating_competencies = parseFloat(pdrRec.greval.getValue('u_aggregate_rating_compentencies')).toFixed(2);
+		pdrRec.hasFunctionalMgr = pdrRec.greval.getValue('u_functional_manager')? true:false;
+		
+		// load other values from main record
+		pdrRec.currentStatus = pdrRec.greval.getValue('u_status');
+		pdrRec.empRef        = pdrRec.greval.getValue('u_employee_name');
+		pdrRec.mgrRef        = pdrRec.greval.getValue('u_manager');
+		pdrRec.funcMgrRef    = pdrRec.greval.getValue('u_functional_manager');
+		pdrRec.secLvlMgrRef  = pdrRec.greval.getValue('u_second_level_manager');
+		//pdrRec.isAdmin       = g_user.hasRole('tm_hr_admin');
+		
+		// set access flag
+		console.log('status:'+pdrRec.currentStatus);
+		console.log('User  :'+pdrRec.sysUserID);
+		console.log('Empl  :'+pdrRec.empRef);
+		console.log('Mgr   :'+pdrRec.mgrRef);
+		console.log('FMgr  :'+pdrRec.funcMgrRef);
+		console.log('2ndLvl:'+pdrRec.secLvlMgrRef);
+
+		console.log('Check Access...');
+		if('usrCanSave' in pdrRec) {console.log('...currently '+pdrRec.usrCanSave);}
+		switch(pdrRec.currentStatus) {
+			//// User's Active PDRs
+			case '2': 
+			case '7':
+			case '9':
+				console.log('...check Empl');
+				pdrRec.usrCanSave = (pdrRec.empRef == pdrRec.sysUserID);
+				break;			
+			//// Functional Reports waiting for User
+			case '3':
+				console.log('...check FMgr');
+				pdrRec.usrCanSave = (pdrRec.funcMgrRef == pdrRec.sysUserID);
+				break;
+			//// Direct Reports waiting for User
+			case '4':
+			case '6':
+				console.log('...check Mgr');
+				pdrRec.usrCanSave = (pdrRec.mgrRef == pdrRec.sysUserID);
+				break;
+			//// Second Level Reports waiting for User
+			case '5':
+				console.log('...check 2ndLvl');
+				pdrRec.usrCanSave = (pdrRec.secLvlMgrRef == pdrRec.sysUserID);
+				break;
+			//// Nope
+			default:
+				console.log('...default false');
+				pdrRec.usrCanSave = false;
+		}
+		console.log('Access:'+pdrRec.usrCanSave);
+		
+		
+		var currentUser = gs.getUser().getID();
+		pdrRec.empWrite = currentUser == pdrRec.sysUserID && pdrRec.currentStatus == 2;
+		pdrRec.funMgrWrite = currentUser == pdrRec.funcMgrRef && pdrRec.currentStatus == 3;
+		pdrRec.mgrWrite = currentUser == pdrRec.mgrRef && pdrRec.currentStatus == 4;
+		
+		var tableName = '';
+
+		// Load Goal Evaluations =========================================================
+		pdrRec.goals = [];
+		pdrRec.showGoals = [];
+		
+		// Loop to get values from u_add_goal_# checkboxes and related u_pe_smart_goal_# tables
+		for(i = 1; i < 6; i++){
+
+			// Get u_add_goal_#i checkbox field value
+			if(i > 1) {
+				console.log('DB.'+pdrRec.greval.getElement('u_add_goal_' + i).getName()+'=='+pdrRec.greval.getValue('u_add_goal_' + i));
+				pdrRec.showGoals.push({name: pdrRec.greval.getElement('u_add_goal_' + i).getLabel(),
+									 value: pdrRec.greval.getValue('u_add_goal_' + i) == 1? true :false,
+									 fldName: pdrRec.greval.getElement('u_add_goal_' + i).getName()
+				});
+			}
+			
+			// Get data from related entry in u_pe_smart_goal_#i table
+			tableName = 'u_pe_smart_goal_' + i;
+			var goal = new GlideRecord(tableName);
+			goal.addQuery('u_parent', pdrRec.pdrID);
+			goal.query();
+
+			if(goal.next()){
+				var sGoal = {
+					idxVal:     i,
+					table:      tableName,
+					sysId:      goal.getUniqueValue(),
+					goal:       goal.getValue('u_sg_goal_' + i),
+					empApp:     goal.getValue('u_sg_employee_appraisal_' + i),
+					funMgrApp:  goal.getValue('u_sg_functional_mgr_appraisal_' + i),
+					managerApp:	goal.getValue('u_sg_manager_appraisal_' + i),
+					weight:     parseInt(pdrRec.greval.getValue('u_goal_weight_' + i)),
+					rating:     parseInt(pdrRec.greval.getValue('u_goal_rating_' + i)),
+					showing:    (i == 1 || pdrRec.greval.getValue('u_add_goal_' + i) == 1) ? true : false,
+					fldName:    'Goal ' + i // pdrRec.greval.getElement('u_add_goal_' + i).getName()
+				};
+				pdrRec.goals.push(sGoal);
+			}
+		}
+		
+		//Load Related Evaluation Competencies   =========================================================
+		pdrRec.competencies = [];
+		
+		tableName = 'x_pdm_pdr_evaluation_competencies';
+		var grcomp = new GlideRecord(tableName);
+		grcomp.addQuery('parent', pdrRec.pdrID);
+		grcomp.query();
+
+		console.log('DB.competencies loop');
+		while(grcomp.next()){
+			
+			console.log('DB.competency - table: '+ grcomp.getTableName() + ', sysID: '+grcomp.getUniqueValue());
+
+			var compDef = new GlideRecord('x_pdm_pdr_competencies');
+			compDef.get(grcomp.getValue('competency'));
+			
+
+			var sComp = {
+				table:      grcomp.getTableName(), // grcomp's table - x_pdm_pdr_evaluation_competencies
+				sysId:      grcomp.getUniqueValue(),
+				competency: grcomp.competency.getDisplayValue(),
+				definition: compDef.getValue('definition'),
+				theme:      compDef.getValue('theme'),
+				empApp:     grcomp.getValue('appraisal_emp'),
+				funMgrApp:  grcomp.getValue('appraisal_man_dot'),
+				managerApp: grcomp.getValue('appraisal_man'),
+				weight:     parseFloat(grcomp.getValue('weight')).toFixed(),
+				rating:     parseInt(grcomp.getValue('rating'))
+			};
+			console.log('pushing competency - table: '+ sComp.table + ', sysID: '+sComp.sysId);
+			pdrRec.competencies.push(sComp);
+			
+		}
+		
+		// Load Future/SMART Goals  =========================================================
+		pdrRec.fGoals = [];
+		pdrRec.showFGoals = [];
+		pdrRec.competencyOptions = [{ name:'Customer Focus'}, {name:'Flawless Execution'}];
+				
+		// Loop to get values from u_add_smart_goal_# checkboxes and related u_pe_future_goal_# tables
+		console.log('DB.futureGoals Loop');
+		for(i = 1; i < 6; i++){
+
+			// Get u_add_smart_goal_#i checkbox field value
+			if(i > 1) {
+				pdrRec.showFGoals.push({name: pdrRec.greval.getElement('u_add_smart_goal_' + i).getLabel(),
+										value: pdrRec.greval.getValue('u_add_smart_goal_' + i) == 1? true :false,
+										fldName: pdrRec.greval.getElement('u_add_smart_goal_' + i).getName()
+				});
+			}
+
+			// Get data from related entry in u_pe_future_goal_#i table
+			tableName = 'u_pe_future_goal_' + i;
+			var fGoal = new GlideRecord(tableName);
+			fGoal.addQuery('u_parent', pdrRec.pdrID);
+			fGoal.query();
+
+			if(fGoal.next()){
+				
+				console.log('fgoal : tbl:'+tableName +', date #'+i+'-'+fGoal.getValue('u_fg_due_date_' + i));
+				var sFGoal = {
+					table:       tableName,
+					sysId:       fGoal.getUniqueValue(),
+					goal:        fGoal.getValue('u_fg_goal_' + i),
+					measurement: fGoal.getValue('u_fg_measurement_' + i),
+					results:     fGoal.getValue('u_fg_results_' + i),
+					dueDate: fixDate(fGoal.getValue('u_fg_due_date_' + i),'get'),
+					competency:  fGoal.getValue('u_fg_competency_' + i),
+					compList:		 fGoal.getElement('u_fg_competency_' + i).getChoices(),
+					weight:      parseInt(fGoal.getValue('u_fg_weight_' + i)),
+					idxVal:      i,
+					formFieldId: 'dueDate'+i,
+					showing:     (i == 1 || pdrRec.greval.getValue('u_add_smart_goal_' + i) == 1) ? true : false,
+					fldName:     pdrRec.nextYear + ' Goal ' + i
+				};
+
+				console.log('Show this fgoal = '+sFGoal.showing);
+			
+				pdrRec.fGoals.push(sFGoal);
+			}
+		}
+		
+		// Load Development Plans  =========================================================
+		pdrRec.devPlans = [];
+		pdrRec.showPlans = [];
+		pdrRec.devOptions =[{ name:'Strength'}, {name:'Need'}];
+		
+		// Loop to get values from u_add_dev_goal_# checkboxes and related u_pe_development_goal_# tables
+		console.log('DB.DevlopmentGoals Loop');
+		for(i = 1; i < 7; i++){
+			
+			tableName = 'u_pe_development_goal_' + i;
+			var devPlan = new GlideRecord(tableName);
+			devPlan.addQuery('u_parent', pdrRec.pdrID);
+			devPlan.query();
+
+			// Get u_add_dev_goal_#i checkbox value
+			if(i > 1){		
+				pdrRec.showPlans.push({name: pdrRec.greval.getElement('u_add_dev_goal_' + i).getLabel(),
+									 value: pdrRec.greval.getValue('u_add_dev_goal_' + i) == 1? true :false,
+									 fldName: pdrRec.greval.getElement('u_add_dev_goal_' + i).getName()
+				});
+			}
+
+			// Get data from related entry in u_pe_development_goal_#i table
+			if(devPlan.next()) {
+				
+				console.log('DB.devplan '+i+': tbl:'+tableName+', behavior: '+devPlan.getValue('u_dev_targeted_behavior_' + i));
+				var sdevPlan = {
+					table:      tableName,
+					sysId:      devPlan.getUniqueValue(),
+					behavior:   devPlan.getValue('u_dev_targeted_behavior_' + i),
+					actionPlan: devPlan.getValue('u_dev_action_plan_' + i),
+					devType:    devPlan.getValue('u_dev_type_' + i),
+					devOptions:    devPlan.getElement('u_dev_type_' + i).getChoices(),
+					competency: devPlan.getValue('u_dev_competency_' + i),
+					compOptions:   devPlan.getElement('u_dev_competency_' + i).getChoices(),
+					date:       fixDate(devPlan.getValue('u_dev_target_date_' + i),'get'),
+					idxVal:     i,
+					formFieldId: 'dueDate'+i	,
+					showing:     (i == 1 || pdrRec.greval.getValue('u_add_dev_goal_' + i) == 1) ? true : false,
+					fldName:     'Development Goal ' + i
+				};
+				console.log('devplan push '+sdevPlan.idxVal+': tbl:'+sdevPlan.table+', behavior: '+sdevPlan.behavior);
+				pdrRec.devPlans.push(sdevPlan);
+			}
+		}
+		
+				
+		// Load Evaluation Comments  =========================================================
+		pdrRec.evalComments = '';
+		tableName = 'u_pe_comments';
+		var grComments = new GlideRecord(tableName);
+		grComments.addQuery('u_parent', pdrRec.pdrID);
+		grComments.query();
+		
+		if(grComments.next()){
+			pdrRec.evalComments = {
+				table: tableName,
+				sys_id: grComments.getUniqueValue(),
+				empComments: grComments.getValue('u_emp_comments'),
+				funMgrComments: grComments.getValue('u_funcmgr_comments'),
+				managerComments: grComments.getValue('u_mgr_comments')
+			};
+		}
+	}
+	
+	function updatePDRRecord(pdrRec) {
+
+		// Push Smart Goals =========================================
+		
+		//// set checkboxes
+		console.log('showGoals loop');
+		pdrRec.showGoals.forEach(function(element) {
+			console.log('name: '+ element.fldName+' value: '+ element.value);
+			pdrRec.greval.setValue(element.fldName, element.value);
+		});	
+
+		//// Loop through goals[] array and push values to u_pe_smart_goal__# tables 
+		pdrRec.goals.forEach(function(element) {
+			var i = element.idxVal;
+			var goal = new GlideRecord(element.table);
+			goal.get(element.sysId);
+			
+			goal.setValue('u_sg_goal_' + i,                        element.goal);
+			goal.setValue('u_sg_employee_appraisal_' + i,          element.empApp);
+			goal.setValue('u_sg_functional_mgr_appraisal_' + i,    element.funMgrApp);
+			goal.setValue('u_sg_manager_appraisal_' + i,           element.managerApp);
+			pdrRec.greval.setValue('u_goal_weight_' + i, element.weight);
+			pdrRec.greval.setValue('u_goal_rating_' + i, element.rating);
+			
+			goal.update('save from pdr_user_eval');
+		});
+		
+			
+		//// Push Related Evaluation Competencies
+		console.log('Competency Loop');
+		pdrRec.competencies.forEach(function(element) {
+			console.log('Table: '+element.table+', sysId: '+element.sysId);
+			var grcomp = new GlideRecord(element.table);
+			grcomp.get(element.sysId);
+			grcomp.setValue('appraisal_emp',     element.empApp);
+			grcomp.setValue('appraisal_man_dot', element.funMgrApp);
+			grcomp.setValue('appraisal_man',     element.managerApp);
+			grcomp.setValue('rating',            element.rating);
+
+			grcomp.update('save from pdr_user_eval');
+		});
+		
+
+		// Push Future Goals  =========================================
+		
+		//// set checkboxes
+		console.log('showFutureGoals loop');
+		pdrRec.showFGoals.forEach(function(element) {
+			console.log('name: '+ element.fldName+' value: '+ element.value);
+			pdrRec.greval.setValue(element.fldName, element.value);
+		});	
+
+		//// Loop through fgoals[] array and push values to u_pe_future_goal__# tables 
+		pdrRec.fGoals.forEach(function(element) {
+			var i = element.idxVal;
+			var fGoal = new GlideRecord(element.table);
+			fGoal.get(element.sysId);
+			
+			//console.log('fgoal date '+element.dueDate+' valid is: '+element.dueDate.$valid);
+			console.log('fgoal weight #'+i+'-'+element.weight);
+
+			fGoal.setValue('u_fg_goal_' + i,        element.goal);
+			fGoal.setValue('u_fg_measurement_' + i, element.measurement);
+			fGoal.setValue('u_fg_results_' + i,     element.results);
+			fGoal.setValue('u_fg_due_date_' + i,    fixDate(element.dueDate,'set'));
+			fGoal.setValue('u_fg_competency_' + i,  element.competency);
+			fGoal.setValue('u_fg_weight_' + i,      element.weight);
+			
+			fGoal.update('save from pdr_user_eval');
+		});
+		
+							
+		// Push Development Plans   =========================================
+		
+		//// set checkboxes
+		console.log('showPlans loop');
+		pdrRec.showPlans.forEach(function(element) {
+			console.log('name: '+ element.fldName+' value: '+ element.value);
+			pdrRec.greval.setValue(element.fldName, element.value);
+		});	
+
+		//// Loop through devPlans[] array and push values to u_pe_development_goal_# tables 
+		console.log('DevPlans Loop');
+		pdrRec.devPlans.forEach(function(element) {
+			var i = element.idxVal;
+			var devPlan = new GlideRecord(element.table);
+			devPlan.get(element.sysId);
+			
+			console.log('i:'+i+' table:'+element.table+' behavior:'+element.behavior);
+			
+			devPlan.setValue('u_dev_targeted_behavior_' + i,       element.behavior);
+			devPlan.setValue('u_dev_action_plan_' + i,             element.actionPlan);
+			devPlan.setValue('u_dev_type_' + i,                    element.devType);
+			devPlan.setValue('u_dev_competency_' + i,              element.competency);
+			devPlan.setValue('u_dev_target_date_' + i,             fixDate(element.date,'set'));
+			
+			devPlan.update('save from pdr_user_eval');
+		});
+					
+		// Push Evaluation Comments  ===============================
+		if(pdrRec.evalComments && pdrRec.evalComments.table && pdrRec.evalComments.sys_id) {
+			var grComments = new GlideRecord(pdrRec.evalComments.table);
+			grComments.get(pdrRec.evalComments.sys_id);
+			
+			grComments.setValue('u_emp_comments'    , pdrRec.evalComments.empComments);
+			grComments.setValue('u_funcmgr_comments', pdrRec.evalComments.funMgrComments);
+			grComments.setValue('u_mgr_comments'    , pdrRec.evalComments.managerComments);
+
+			grComments.update('save from pdr_usr_eval');
+		}
+	
+			
+		// Set aggregate values  =========================================
+		pdrRec.greval.u_smart_goals_average = pdrRec.rating_goals;
+		pdrRec.greval.u_aggregate_rating_compentencies = pdrRec.rating_competencies;
+		console.log('overall=(' 
+					+ pdrRec.rating_goals + '+' + pdrRec.rating_competencies
+					+ ')/2=' + ((parseFloat(pdrRec.rating_goals) + parseFloat(pdrRec.rating_competencies))/2)
+					+'-->'
+					+ (((parseFloat(pdrRec.rating_goals) + parseFloat(pdrRec.rating_competencies))/2).toFixed(2))
+				   );
+		pdrRec.greval.u_overall_rating = ((parseFloat(pdrRec.rating_goals) + parseFloat(pdrRec.rating_competencies))/2).toFixed(2);
+		
+
+		// Push Update to main performance evaluation record
+		var updResult = pdrRec.greval.update();
+		console.log('update='+updResult);
+		console.log('done');
+		
+		gs.addInfoMessage("Update saved");
+
+
+	}
+
+	function routePDRRecord(pdrRec) {
+
+		if(pdrRec.currentStatus == '2' && pdrRec.sysUserID == pdrRec.empRef){
+			//Route for Functional Manager Input if Functional Manager exist, else route to manager
+			pdrRec.greval.setValue('u_route_from_psa', true);
+			pdrRec.greval.setValue('u_returned_to_employee', false);
+		}
+		else if(pdrRec.currentStatus == '3' && pdrRec.sysUserID == pdrRec.funcMgrRef){
+			//Route from Functional Manager Input to Pending Manager Appraisal
+			pdrRec.greval.setValue('u_route_from_fncmgr', true);
+		}
+		else if(pdrRec.currentStatus == '4' && pdrRec.sysUserID == pdrRec.mgrRef){
+			//Route from Pending Manager Appraisal to Completed
+			pdrRec.greval.setValue('u_route_from_manager', true);
+		}
+		else if(pdrRec.currentStatus == '9' && pdrRec.sysUserID == pdrRec.empRef){
+			//Route from Mid Year to Completed
+			pdrRec.greval.setValue('u_route_from_mid_year', true);
+			pdrRec.greval.setValue('u_route_to_complete', true);
+		}
+		
+		// push to main table, then reload data since the route action will invoke server side business rules
+		pdrRec.greval.update();
+	}
+
+	function fixDate(dt,direction) {
+		//
+		// we need to convert the date format returned by GetValue() [yyyy-mm-dd]
+		// to a format suitable for our purposes [mm/dd/yyyy] and then create 
+		// a new Date object using that string and return it.
+		//
+		// we then need to reconvert it before setting the value in the record
+		// the second argument determines the direction of the conversion 
+		//
+		//          0123456789
+		// "set" = [mm/dd/yyyy] ---> [yyyy-mm-dd]
+		// "get" = [yyyy-mm-dd] ---> [mm/dd/yyyy]
+		//
+		
+		var xtcYear  ='0000';
+		var xtcMonth ='00';
+		var xtcDay   ='00';
+
+		if(direction == "set" && dt)
+		{
+			xtcMonth = dt.slice(0,2);
+			xtcDay = dt.slice(3,5);
+            xtcYear = dt.slice(6,10);
+
+			return (xtcYear+'-'+xtcMonth+'-'+xtcDay);
+		}
+		else if(direction == "get" && dt) {
+			xtcYear = dt.slice(0,4);
+			xtcMonth = dt.slice(5,7);
+			xtcDay = dt.slice(8,10);
+			
+			return (xtcMonth+'/'+xtcDay+'/'+xtcYear);
+		}
+		else {
+			console.log('no date');
+			return '';
+		}
+	}
+
+	
+})();]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>jonathanv_adm</sys_created_by>
+        <sys_created_on>2017-10-16 16:05:28</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_id>eec3839213b98f806b3330128144b028</sys_id>
+        <sys_mod_count>625</sys_mod_count>
+        <sys_name>PDR Content</sys_name>
+        <sys_package display_value="Performance &amp; Development Review" source="x_pdm_pdr">5c227acc13b50bc0995fb6d96144b0f9</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Performance &amp; Development Review">5c227acc13b50bc0995fb6d96144b0f9</sys_scope>
+        <sys_update_name>sp_widget_eec3839213b98f806b3330128144b028</sys_update_name>
+        <sys_updated_by>jonathanv_adm</sys_updated_by>
+        <sys_updated_on>2017-11-29 16:11:01</sys_updated_on>
+        <template><![CDATA[<script type="text/ng-template" id="compModal">
+	<div class="panel panel-default">
+		<div class="panel-heading" style="background-color: Orange; color: white;">
+			<div class="panel-title" >
+      	<span style="font-weight:bold; font-size: 1.2em;">{{c.competency.competency}}</span>
+  		</div>
+  	</div>
+		<div class="panel-body wrapper">
+			<div>
+       	<label><strong>Theme: </strong></label>
+      	<label style="display: inline;">{{c.competency.theme}}</label><br>
+        <label><strong>Definition:</strong></label><br>
+        <label style="text-align: justify;">{{c.competency.definition}}</label>
+      </div>
+  	</div>
+		<div class="panel-footer text-right">
+			<button class="btn btn-primary" ng-click="c.closeModal()">${Close}</button>
+		</div>
+	</div>
+</script>
+
+<div class="container pdr-content">
+	<ul class="nav nav-pills nav-justified">
+    <li><a data-toggle="pill" data-target="#eval" class="pdr-li"><p><span class="pdr-year">{{data.year}}</span><br>Evaluation</p></a></li>
+    <li><a data-toggle="pill" data-target="#future" class="pdr-li"><p><span class="pdr-year">{{data.nextYear}}</span><br>SMART Goals</p></a></li>
+    <li><a data-toggle="pill" data-target="#development" class="pdr-li"><p><span class="pdr-year">{{data.nextYear}}</span><br>Development Plans</p></a></li>
+    <li><a data-toggle="pill" data-target="#comments" class="pdr-li"><p><span class="pdr-year">{{data.year}}</span><br>Comments</p></a></li>
+  </ul>
+  
+  <div class="tab-content">
+      <div id="eval" class="tab-pane fade in active">
+        
+        <div class="panel panel-primary cate-title">
+          <div class="panel-heading">
+            <span class="panel-title">Goals - 50% of Overall Rating</span>
+            <div class = "rating-panel">
+              Average Rating <span class="rating">{{data.rating_goals}}</span>
+            </div>
+          </div>
+        </div>
+        <div ng-repeat="goal in data.goals">
+          <form name="goalsForm">
+            <div ng-show="data.showGoals[$index - 1].value || $first" class="panel panel-default md-block">
+              <div class="panel panel-body">
+                <label>
+                  <span class="field-decorations">
+                  	<span class="fa fa-asterisk mandatory" ng-show="data.empWrite || data.mgrWrite" ng-class="{'mandatory-filled':c.mandatory_filled(goal.goal)}"></span>
+                  </span>
+                  <strong>Goal {{$index + 1}}:</strong></label> 
+                <textarea jv-autosize class="form-control" ng-model="goal.goal" ng-readonly="!(data.empWrite || data.mgrWrite)" ng-required="data.empWrite || data.mgrWrite" rows=8></textarea>
+                <label><strong>Employee Appraisal:</strong></label> 
+                <textarea jv-autosize class="form-control" ng-model="goal.empApp" ng-readonly="!data.empWrite" ng-required="!data.empWrite"></textarea>
+                <div ng-show="data.hasFunctionalMgr">
+                  <label><strong>Manager(dotted line) Appraisal:</strong></label> 
+                  <textarea jv-autosize class="form-control" ng-model="goal.funMgrApp" ng-readonly="!data.funMgrWrite"></textarea>
+                </div>
+                <label>
+                  <span class="field-decorations">
+                  	<span class="fa fa-asterisk mandatory" ng-show="data.mgrWrite" ng-class="{'mandatory-filled':c.mandatory_filled(goal.managerApp)}"></span>
+                  </span>
+                  <strong>Manager Appraisal:</strong></label> 
+                <textarea jv-autosize class="form-control" ng-model="goal.managerApp" ng-readonly="!data.mgrWrite" ng-required="data.mgrWrite"></textarea>
+              </div>
+              <div class="panel-footer item-footer">
+                <table class="add-remove">
+                  <tr>
+                    <td>
+                      <label><strong>Weight:</strong></label>
+                      <input style="color:black;" type="number" ng-model="goal.weight" min="0" max="100"
+							 ng-change="data.rating_goals = c.updateWeightedRatingAvg(data.goals)" ng-readonly="!(data.empWrite || data.mgrWrite)"
+                             required="data.showGoals[$index - 1].value || $first">
+                    </td>
+                    <td style="text-align: right;">
+                      <label><strong>Rating:</strong></label>
+                      <span uib-rating ng-click="data.rating_goals = c.updateWeightedRatingAvg(data.goals)" ng-model="goal.rating" read-only="true" max="5" style="color:Orange;"></span>
+                    </td>
+                  </tr> 
+                </table>
+              </div>
+            </div>
+            <div ng-if="$first">
+              <form>
+                <table class="add-remove">
+                  <tr>
+                    <td ng-repeat="showGoal in data.showGoals">
+                      <p class="add-option">
+                        <input type="checkbox" ng-model="showGoal.value" ng-readonly="!data.empWrite"> {{showGoal.name}} 
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              </form>
+            </div>
+          </form>
+        </div>
+       
+        <div class="panel panel-primary cate-title">
+          <div class="panel-heading">
+            <span class="panel-title">Competencies - 50% of Overall Rating</span>
+            <div class = "rating-panel">
+              Average Rating <span class="rating">{{data.rating_competencies}}</span>
+            </div>
+          </div>
+        </div>
+        <div ng-repeat="item in data.competencies">
+          <form name="compForm">
+            <div class="panel panel-default md-block">
+               <div class="panel-heading item-heading">
+                <table class="add-remove">
+                  <tr>
+                    <td>
+                      <label><strong>{{item.competency}} </strong></label>
+                    </td>
+                    <td style="text-align: right;">
+                      <button type="button" ng-click="c.openModal(item)" class="btn btn-info btn-sm">
+                        <span class="glyphicon glyphicon-book" style="padding-right: 5px;"></span>See Definition
+                      </button>
+                    </td>
+                  </tr> 
+                </table>
+              </div>
+              <div class="panel panel-body">
+                <label><strong>Employee Appraisal:</strong></label> 
+                <textarea ng-model="item.empApp" md-maxlength="2000" ng-readonly="!data.empWrite"></textarea>
+                <div ng-show="data.hasFunctionalMgr">
+                  <label><strong>Manager(dotted line) Appraisal:</strong></label> 
+                  <textarea ng-model="item.funMgrApp" md-maxlength="2000" ng-readonly="!data.funMgrWrite"></textarea>
+                </div>
+                <label><strong>Manager Appraisal:</strong></label> 
+                <textarea ng-model="item.managerApp" md-maxlength="2000" ng-readonly="!data.mgrWrite"></textarea>
+              </div>
+              <div class="panel-footer item-footer">
+                <table class="add-remove">
+                  <tr>
+                    <td>
+                      <label><strong>Weight: </strong></label>All Competencies are equally wieghted
+                    </td>
+                    <td style="text-align: right;">
+                      <label><strong>Rating:</strong></label>
+                      <span uib-rating ng-model="item.rating" ng-click="data.rating_competencies = c.updateBasicRatingAvg(data.competencies)"  ng-readonly="!data.empWrite" max="5" style="color:Orange;"></span>
+                    </td>
+                  </tr> 
+                </table>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div id="future" class="tab-pane fade">
+        <br>
+        <div ng-repeat="fGoal in data.fGoals">
+          <form name="futureForm">
+            <div ng-show="data.showFGoals[$index - 1].value || $first" class="panel panel-default md-block">
+              <div class="panel panel-body">
+                <label><strong>{{data.nextYear}} Goal {{$index + 1}}:</strong></label> 
+                <textarea ng-model="fGoal.goal" ng-keyup="c.resize($event)" ng-readonly="!data.empWrite"></textarea>
+                <label><strong>Measurement:</strong></label> 
+                <textarea ng-model="fGoal.measurement" ng-keyup="c.resize($event)" ng-readonly="!data.empWrite"></textarea>
+                <label><strong>Expected results:</strong></label> 
+                <textarea ng-model="fGoal.results" ng-keyup="c.resize($event)" ng-readonly="!data.empWrite"></textarea>
+              </div>
+              <div class="panel-footer item-footer">
+                <table class="add-remove">
+                  <tr>
+                    <td>
+                      <label><strong>Weight:</strong></label>
+                      <input style="color:black;" type="number" ng-model="fGoal.weight" min="0" max="100"  ng-readonly="!data.empWrite"
+                             required="data.showGoals[$index - 1].value || $first">
+                    </td>
+                    <td style="text-align: center;">
+                      <label><strong>Competency:</strong></label>
+                      <select ng-model="fGoal.competency" ng-options="option for option in fGoal.compList" ng-readonly="!data.empWrite"></select>
+                    </td>
+					<td  style="text-align: right;">
+					</td>
+                    <td style="text-align: right;">
+                      <label><strong>Due date:</strong></label>
+                      <input type="text" name={{fGoal.formFieldId}}
+                             ng-model="fGoal.dueDate" 
+                             ng-pattern="data.dateValidationPattern"
+                             ng-readonly="!data.empWrite"
+                             > 
+						<div ng-hide="futureForm[fGoal.formFieldId].$valid">
+							<font color='#ff0033'><strong>Please enter a valid date in the format 'mm/dd/yyyy'</strong></font>
+						</div>
+                    </td>
+                  </tr> 
+                </table>
+              </div>
+            </div>
+            <div ng-if="$first">
+              <form>
+                <table class="add-remove">
+                  <tr>
+                    <td ng-repeat="showFGoal in data.showFGoals">
+                      <p class="add-option">
+                        <input type="checkbox" ng-model="showFGoal.value" ng-readonly="!data.empWrite"> {{showFGoal.name}} 
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              </form>
+            </div>
+          </form>
+        </div>
+      </div>
+    
+      <div id="development" class="tab-pane fade">
+        <br>
+        <div ng-repeat="item in data.devPlans">
+          <form name="developmentForm">
+            <div ng-show="data.showPlans[$index - 1].value || $first" class="panel panel-default md-block">
+              <div class="panel-heading item-heading"><strong>Development Goal {{$index + 1}}</strong></div>       
+              <div class="panel panel-body">
+                <label><strong>Targeted Behavior:</strong></label> 
+                <textarea ng-model="item.behavior" ng-keyup="c.resize($event)" ng-readonly="!data.empWrite"></textarea>
+                <label><strong>Action Plan:</strong></label> 
+                <textarea ng-model="item.actionPlan" ng-keyup="c.resize($event)" ng-readonly="!data.empWrite"></textarea>
+              </div>
+              <div class="panel-footer item-footer">
+                <table class="add-remove">
+                  <tr>
+                    <td>
+                      <label><strong>Development Type:</strong></label>
+                      <select ng-model="item.devType" ng-options="option for option in item.devOptions" ng-readonly="!data.empWrite"></select>
+                    </td>
+                    <td style="text-align: center;">
+                      <label><strong>Competency:</strong></label>
+                      <select ng-model="item.competency" ng-options="option for option in item.compOptions" ng-readonly="!data.empWrite"></select>
+                    </td>
+                    <td style="text-align: right;">
+                      <label><strong>Target date:</strong></label>
+                      <input type="text" name={{item.formFieldId}} 
+                             ng-model="item.date"
+                             ng-pattern="data.dateValidationPattern"
+                             ng-readonly="!data.empWrite"
+                             >  
+					  <div ng-hide="developmentForm[item.formFieldId].$valid">
+					  	<font color='#ff0033'><strong>Please enter a valid date in the format 'mm/dd/yyyy'</strong></font>
+					  </div>
+                    </td>
+                  </tr> 
+                </table>
+              </div>
+            </div>
+            <div ng-if="$first">
+              <form>
+                <table class="add-remove">
+                  <tr>
+                    <td ng-repeat="showPlan in data.showPlans">
+                      <p class="add-option">
+                        <input type="checkbox" ng-model="showPlan.value" ng-readonly="!data.empWrite"> {{showPlan.name}} 
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              </form>
+            </div>
+          </form>
+        </div>
+        
+      </div>
+      <div id="comments" class="tab-pane fade">
+        <form name="commentsForm">
+            <div ng-show="data.evalComments" class="panel panel-default md-block">
+              <div class="panel-heading item-heading"><strong>Overall Comments</strong></div>       
+              <div class="panel panel-body">
+                <label><strong>Employee comments:</strong></label> 
+                <textarea ng-model="data.evalComments.empComments" ng-keyup="c.resize($event)" ng-readonly="!data.empWrite"></textarea>
+                <div ng-show="data.hasFunctionalMgr">
+                  <label><strong>Manager(dotted line) comments:</strong></label> 
+                  <textarea ng-model="data.evalComments.funMgrComments" ng-keyup="c.resize($event)" ng-readonly="!data.funMgrWrite"></textarea>
+                </div>
+                <label><strong>Manager comments:</strong></label> 
+                <textarea ng-model="data.evalComments.funMgrComments" ng-keyup="c.resize($event)" ng-readonly="!data.mgrWrite"></textarea>
+              </div>
+            </div>
+          </form>
+      </div>
+  </div>
+  
+  <div class="panel-footer">
+      <button ng-mousedown="c.triggerUIAction(action)" ng-repeat="action in c.getUIActions('button')" class="btn btn-default action-btn">{{action.name}}</button>
+      <span>{{status}}</span>
+      <!-- <button ng-if="c.getPrimaryAction()" type="submit" ng-mousedown="c.saveEvaluation()" class="btn btn-primary action-btn pull-right">${Save} <span ng-if="saveButtonSuffix">(${{{saveButtonSuffix}}})</span></button> -->
+	  <!-- <button type="submit" ng-mousedown="c.uiAction('load')" class="btn btn-primary action-btn pull-right">Load</button> -->
+	  <button type="submit" ng-disabled="!data.usrCanSave" ng-mousedown="c.uiAction('route')" class="btn btn-primary action-btn pull-right">Route</button>
+	  <button type="submit" ng-disabled="!data.usrCanSave" ng-mousedown="c.uiAction('save')" class="btn btn-primary action-btn pull-right">Save</button>
+	  <div style="clear: both;"></div>
+      <div ng-if="mandatory.length" class="alert alert-info" style="margin-top: .5em">
+        <span ng-if="mandatory.length > 0">${Required information} </span>
+        <span ng-repeat="f in mandatory" class="label label-danger" style="margin-right: .5em; display: inline-block;">{{f.label}}</span>
+      </div>
+    </div>			
+  
+</div>
+
+]]></template>
+    </sp_widget>
+</record_update>

@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <client_script><![CDATA[function ($scope, $element, $window, $location, $rootScope, $timeout, snAttachmentHandler, $http, spUtil) {
+	
+	// Many of these fields are more configuration-type fields than profile fields. We still want to display
+	// these to a user who is configuring their 'settings', but we shouldn't show them on a user profile page.
+	// We need to handle this better.
+	var fieldExcludes = {
+		sys_user: ['name', 'introduction', 'title', 'department', 'location', 'photo',
+							 'manager', 'company'],
+		live_profile: ['short_description', 'photo']
+	}
+	
+	$scope.openConnectConversation = function() {
+		$window.open('/$c.do#?user=' + $scope.data.liveProfileID, '_blank');
+	}
+	
+	$scope.uploadNewProfilePicture = function($event) {
+		$event.stopPropagation();
+		var $el = $element.find('input[type=file]');
+		$el.click();
+	}
+	
+	$scope.avatarPicture = "";
+	
+	$http.get('/api/now/live/profiles/sys_user.' + $scope.data.sysUserID).then(function (response) {
+		if (response.data.result && response.data.result.avatar){
+			var avatarPicture = response.data.result.avatar.replace("?t=small", "");
+			$scope.avatarPicture = {
+				'background-image': "url('" + avatarPicture + "')",
+				'color': 'transparent'
+			};
+		}
+	});
+	
+	spUtil.recordWatch($scope, "sys_user", "sys_id=" + $scope.data.sysUserID);
+	spUtil.recordWatch($scope, "live_profile", "sys_id=" + $scope.data.liveProfileID);
+	
+	$scope.connectEnabled = function() {
+		return $scope.data.connectEnabled && !$scope.data.isLoggedInUsersProfile;
+	}
+	
+	$scope.openUserProfile = function($event, userID) {
+		$event.stopPropagation();
+		$event.preventDefault();
+		$location.search("id=user_profile&sys_id=" + userID);
+	}
+	
+	
+	var models = {
+		sys_user: $scope.data.sysUserModel,
+		live_profile: $scope.data.liveProfileModel
+	}
+	
+	$scope.displayField = function(tableName, field, isHeader) {
+		if (!isHeader && fieldExcludes[tableName].indexOf(field) > -1) return false;
+		
+		if (models[tableName][field] && models[tableName][field].type === "boolean") return false;
+		
+		if ($scope.data.isLoggedInUsersProfile) {
+			if (models[tableName][field] && models[tableName][field].readonly)
+				return models[tableName][field].displayValue;
+			else
+				return models[tableName][field];
+		} else {
+			return models[tableName][field] && models[tableName][field].displayValue;
+		}
+	}
+
+	$timeout(function(){
+		$rootScope.$broadcast('finishedChanged', {profile: $scope.data.teamData});
+	});
+}]]></client_script>
+        <controller_as>c</controller_as>
+        <css>.list-group-item {
+  border: none;
+}
+
+
+.select2-container.select2-allowclear .select2-choice .select2-chosen {
+  margin-right: 60px;
+}
+
+.mia i {
+  font-size: 6rem;
+}
+
+.mia {
+  color: #808080;
+}
+
+.profile-summary{
+   margin-bottom: 5px;
+}
+
+.banner{
+   margin-bottom: 10px;
+}
+
+th, td{
+  padding-right: 5px;
+}
+
+tr{
+  padding-right: 10px;
+}
+
+table{
+  width:100%;
+}
+
+.row{
+	position: relative;
+}
+
+.rating{
+  
+	text-align:center;
+  font-size: 68px;
+  margin: 0px;
+  line-height: 1;
+  padding: 15px 3px;
+  
+}
+
+.rat-panel{
+	margin: auto;
+  width: 160px;
+  position: relative;
+}
+
+.col-rating{
+  
+	position: absolute;
+  height:100%;
+  right: 0px;
+  top: 0px;
+}
+
+span.label-warning{
+	margin-left: 5px;
+  font-size: 0.85em;
+}
+
+.bottom-panel{
+	position: absolute;
+  bottom: 0px;
+}
+
+.panel_defualt{
+	margin-bottom: 10px;
+}
+
+
+
+
+</css>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>false</has_preview>
+        <id>pdr_profile</id>
+        <internal>false</internal>
+        <link/>
+        <name>PDR Profile</name>
+        <option_schema/>
+        <public>true</public>
+        <roles/>
+        <script><![CDATA[// populate the 'data' object
+// e.g., data.table = $sp.getValue('table');
+data.pdrID = $sp.getParameter("sys_id");
+
+var greval = new GlideRecord("u_performance_evaluation");
+data.userExists = greval.get(data.pdrID);
+
+if (data.userExists) {
+	data.sysUserID = greval.getValue("u_employee_name");
+	if (!data.sysUserID)
+         data.sysUserID = gs.getUser().getID();
+	
+	var hrprof = new GlideRecord("sn_hr_core_profile");
+	hrprof.addQuery("user", data.sysUserID);
+	hrprof.query();
+	
+	if(hrprof.next()){
+		data.name = hrprof.user.getDisplayValue();
+		var altTitle = hrprof.getValue("u_working_title");
+		data.title = altTitle? altTitle: hrprof.position.getDisplayValue();
+		data.manager = greval.u_manager.getDisplayValue();
+		data.secondManager = greval.u_second_level_manager.getDisplayValue();
+		data.dottedManager = greval.u_functional_manager.getDisplayValue();
+		data.location = hrprof.user.location.getDisplayValue();
+		data.division = hrprof.u_division.getDisplayValue();
+		data.bus_unit = hrprof.u_bus_unit.getDisplayValue();
+		data.status = greval.u_status.getDisplayValue();
+		data.overallRating = greval.getValue('u_overall_rating') || '-'; 
+		var loggedInSysUserID = gs.getUser().getID();
+		data.isLoggedInUsersProfile = loggedInSysUserID.equals(data.sysUserID);
+		
+	}
+}
+
+]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>jonathanv_adm</sys_created_by>
+        <sys_created_on>2017-10-10 15:35:19</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_id>9a538ca013f14bc0995fb6d96144b06b</sys_id>
+        <sys_mod_count>103</sys_mod_count>
+        <sys_name>PDR Profile</sys_name>
+        <sys_package display_value="Performance &amp; Development Review" source="x_pdm_pdr">5c227acc13b50bc0995fb6d96144b0f9</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Performance &amp; Development Review">5c227acc13b50bc0995fb6d96144b0f9</sys_scope>
+        <sys_update_name>sp_widget_9a538ca013f14bc0995fb6d96144b06b</sys_update_name>
+        <sys_updated_by>jonathanv_adm</sys_updated_by>
+        <sys_updated_on>2017-11-28 16:23:08</sys_updated_on>
+        <template><![CDATA[<div>
+  <div ng-if="data.userExists">
+    <div class="panel panel-default banner">
+      <img src="pe_banner.png" width="100%" height="160"/>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div class="row">
+          <div class="col-xs-12 col-sm-3 text-center">
+            <div class="row">
+              <div class="avatar-extra-large avatar-container" style="cursor:default;">
+                <div class="avatar soloAvatar bottom">
+                  <div class="sub-avatar mia" ng-style="avatarPicture"><i class="fa fa-user"></i></div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <!-- file upload -->
+              <span ng-if="::data.isLoggedInUsersProfile">
+                <input ng-show="false" type="file" ng-file-select="attachFiles({files: $files})" />
+                <button ng-click="uploadNewProfilePicture($event)" 
+                        ng-keypress="uploadNewProfilePicture($event)" type="button" 
+                        class="btn btn-default send-message">${Upload Picture}</button>
+              </span>
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-6">
+            <h2 class="profile-summary">{{data.name}}</h2>
+            <h4 class="profile-summary">{{data.title}}</h4>
+            <table>
+              <tr>
+                <td><strong>${Manager}</strong> {{data.manager}}</td>
+                <td><strong>${Manager (dotted line)}</strong> {{data.dottedManager}}</td>
+              </tr>
+              <tr>
+                <td><strong>${Location}</strong> {{data.location}}</td>
+                <td><strong>${Second Level Manager}</strong> {{data.secondManager}}</td>
+              </tr>
+              <tr>
+                <td><strong>${Division}</strong> {{data.division}}</td>
+                <td><strong>${Business Unit}</strong> {{data.bus_unit}}</td>
+              </tr>
+            </table>
+          </div>
+          <div class="col-xs-12 col-sm-3 col-rating">
+            <table style="height: 100%">
+              <tr>
+             	 <td>
+                  <div class ="panel panel-default rat-panel">
+                  <div class="panel-body rating">
+                    {{data.overallRating}}
+                  </div>
+                  <div class="panel-footer" style="text-align:center; padding: 3px;">Overall Rating</div>
+                 </div>
+                </td>
+              </tr>
+              <tfoot style="height: 25%">
+                <tr>
+                  <td>
+                    <div>
+                      <p style="margin: 0px; text-align: center;">
+                       
+                        <span class="label label-danger">{{data.status}}</span><br>
+                         ${Status}
+                      </p>
+                    </div>
+                  </td>
+                 </tr>
+               </tfoot>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div ng-if="!data.userExists" >
+    <div class="panel panel-default">
+      <div class="panel-heading"><h4 class="panel-title">${User not found}</h4></div>
+      <div class="panel-body wrapper">
+        <p>${This user does not exist}</p>
+        <p>${Suggestions}:</p>
+        <ul>
+          <li>${Contact your portal administrator}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>]]></template>
+    </sp_widget>
+</record_update>

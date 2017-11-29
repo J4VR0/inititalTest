@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_data_source">
+    <sys_data_source action="INSERT_OR_UPDATE">
+        <category/>
+        <connection_timeout>0</connection_timeout>
+        <connection_url>jdbc:oracle:thin:@db3057.coresys.com:61001:PKDT</connection_url>
+        <connection_url_parameters/>
+        <csv_delimiter/>
+        <database_name/>
+        <database_port/>
+        <expand_node_children>false</expand_node_children>
+        <file_path/>
+        <file_retrieval_method>Attachment</file_retrieval_method>
+        <format>oracle.jdbc.OracleDriver</format>
+        <glide_keystore>false</glide_keystore>
+        <header_row>0</header_row>
+        <import_set_table_label>ora pdr competencies def</import_set_table_label>
+        <import_set_table_name>u_ora_pdr_competencies_def</import_set_table_name>
+        <instance_name/>
+        <jdbc_password>rRtJGfKfzrI=</jdbc_password>
+        <jdbc_server>db3057.coresys.com</jdbc_server>
+        <jdbc_user_name>APPSRO</jdbc_user_name>
+        <last_run_database_field/>
+        <last_run_datetime/>
+        <ldap_target/>
+        <maximum_rows/>
+        <mid_server display_value="PDCHDEVDC01_GWP_DEV">74abab5513bab600995fb6d96144b05e</mid_server>
+        <name>JDBC Oracle PDR Competencies v2</name>
+        <oracle_port>61001</oracle_port>
+        <oracle_sid>PKDT</oracle_sid>
+        <properties/>
+        <query>All Rows from Table</query>
+        <query_timeout>0</query_timeout>
+        <scp_authentication>Username and Password</scp_authentication>
+        <scp_password/>
+        <scp_port/>
+        <scp_server/>
+        <scp_user_name/>
+        <sheet_number>0</sheet_number>
+        <sql_statement/>
+        <ssh_keyfile_path/>
+        <sys_class_name>sys_data_source</sys_class_name>
+        <sys_created_by>jonathanv_adm</sys_created_by>
+        <sys_created_on>2017-10-09 16:06:44</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_id>62204b8413f50bc0995fb6d96144b02b</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>JDBC Oracle PDR Competencies v2</sys_name>
+        <sys_package display_value="Performance &amp; Development Review" source="x_pdm_pdr">5c227acc13b50bc0995fb6d96144b0f9</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Performance &amp; Development Review">5c227acc13b50bc0995fb6d96144b0f9</sys_scope>
+        <sys_update_name>sys_data_source_62204b8413f50bc0995fb6d96144b02b</sys_update_name>
+        <sys_updated_by>jonathanv_adm</sys_updated_by>
+        <sys_updated_on>2017-10-09 19:02:03</sys_updated_on>
+        <table_name>APPS.XXPKD_LEDCO_COMPETENCIES_V </table_name>
+        <type>JDBC</type>
+        <use_integrated_authentication>false</use_integrated_authentication>
+        <use_last_run_datetime>false</use_last_run_datetime>
+        <xpath_root_node/>
+        <zipped>false</zipped>
+    </sys_data_source>
+</record_update>
