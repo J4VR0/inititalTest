@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <database>
     <element label="Competencies" max_length="40" name="x_pdm_pdr_competencies" type="collection">
+        <element label="Active" max_length="40" name="active" type="boolean"/>
         <element label="Default" max_length="40" name="default" type="boolean"/>
         <element label="Definition" max_length="2000" name="definition" type="string"/>
         <element label="Level of Management" max_length="32" name="management_level" reference="u_pkd_choices" reference_qual="u_attribute=management_level^u_active=true^EQ" reference_qual_condition="u_attribute=management_level^u_active=true^EQ" type="reference"/>
