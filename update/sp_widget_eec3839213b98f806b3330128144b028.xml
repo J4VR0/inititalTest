@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <record_update table="sp_widget">
     <sp_widget action="INSERT_OR_UPDATE">
-        <client_script><![CDATA[function(spUtil, $uibModal, $scope, $timeout) {
+        <client_script><![CDATA[function(spUtil, $uibModal, $scope, $timeout, $window) {
 
 	var c = this;
 
@@ -114,46 +114,55 @@
 		if(action == 'save') {
 			performSave(c.data);
 		}
+		if(action == 'print') {
+			performPrint(c.data);
+		}
 		if(action == 'load') {
 			performLoad(c.data);
 		}
+
+	};
+
+	
+	// function to perform print
+	performPrint = function(dr) {
+		// open a print window for current record
+
+		var url = 'u_performance_evaluation.do?sysparm_record_rows=100&sysparm_record_row=1&sys_id=' + dr.pdrID;
+		url    += '&sysparm_stack=no&sysparm_force_row_count=999999999&sysparm_media=print';
 		
-
+		//var url = '$sp.do?id=pdr_user_eval&table=u_performance_evaluation&sys_id=' + dr.pdrID;
+		$window.open(url,'printWindow','menu_bar=no,scrollbars=yes');
+		
+		//$window.print();
+		
+		
 	};
-
-	checkData = function() {
-
-		console.log('After update...:');
-		console.log('...status:'+c.data.currentStatus);
-		console.log('...User  :'+c.data.sysUserID);
-		console.log('...Empl  :'+c.data.empRef);
-		console.log('...Mgr   :'+c.data.mgrRef);
-		console.log('...FMgr  :'+c.data.funcMgrRef);
-		console.log('...2ndLvl:'+c.data.secLvlMgrRef);
-		console.log('...access:'+c.data.usrCanSave);
-
-		console.log('saveFlag =' + c.data.usrCanSave);
-		var ztmpSaveFlag = c.data.usrCanSave;
-		c.data.usrCanSave = ztmpSaveFlag;
-		console.log('saveFlag =' + ztmpSaveFlag);
-		console.log('saveFlag =' + c.data.usrCanSave);
-	};
-
-	// function to perform load
-	performLoad = function(dr) {
-		dr.action = 'load';
-		c.server.update().then(function() {checkData(); dr.action = undefined; /*c.server.refresh();*/ });
-
-	};
-
 	
 	// function to perform route
 	performRoute = function(dr) {
-		dr.action = 'route';
-		c.server.update().then(function() {checkData(); dr.action = undefined; });
+		
+		var rslt = '';
+		
+		// check permission to route
+		rslt = validateRoutePermission(dr);
 
+		// if permitted, continue with data validation
+		if (rslt == '') {
+			rslt += validateDateFields(dr);
+			rslt += validateRouteRequiredFields(dr);
+		}
+		
+		// if no errors found, run route, otherwise, error dialog
+		if(rslt == '') {
+			dr.action = 'route';
+			c.server.update().then(function() {dr.action = undefined; });
+		}
+		else {
+			alert(rslt);
+		}
 	};
-	
+
 	// function to perform save
 	performSave = function(dr) {
 
@@ -163,38 +172,303 @@
 		
 		if(rslt == '') {
 			dr.action = 'save';
-			c.server.update().then(function() {checkData(); dr.action = undefined;});
+			c.server.update().then(function() {dr.action = undefined;});
 		}
 		else {
 			alert(rslt);
 		}
 	};
+
+	// function to perform load (just here for testing purposes)
+	performLoad = function(dr) {
+		dr.action = 'load';
+		c.server.update().then(function() {dr.action = undefined; /*c.server.refresh();*/ });
+
+	};
+
 	
 	// function to validate date fields
 	validateDateFields = function (dr) {
 
 		//init error list
 		console.log('Validating Date Fields');
+		console.log('Using: ' + dr.dateValidationPattern);
 		var rs = '';
-		//Loop through future goals and check dates
 
 		//Loop through future goals and check dates
 		dr.fGoals.forEach(function(element) {
-			if(element.dueDate && element.showing && !(RegExp(dr.dateValidationPattern).test(element.dueDate))) {
-				console.log(element.fldName+' is bad ('+element.dueDate+')');
-				rs += 'Invalid date ('+element.dueDate+') for ' + element.fldName + '\n';
+			// only check on items with the "show" checkbox set
+			//// NOTE: checkbox array is zero-indexed, but the items are tagged with 1-indexed index values
+			////       And there's no checkbox for the first item
+			////       So "show item #2 checkbox" == show[0] !!!
+			if ((element.idxVal == 1) || (dr.showFGoals[element.idxVal-2].value)) { 
+				// allow blank dates
+				if(!(element.dueDate == '') && !(RegExp(dr.dateValidationPattern).test(element.dueDate))) {
+					
+					console.log(element.fldName+' is bad ('+element.dueDate+')');
+					rs += 'Invalid date ('+element.dueDate+') for ' + element.fldName + '\n';
+				}
 			}
 		});
 
 		//Loop through development plans and check dates
 		dr.devPlans.forEach(function(element) {
-			if(element.dueDate && element.showing && !(RegExp(dr.dateValidationPattern).test(element.date))) {
-				console.log(element.fldName+' is bad ('+element.dueDate+')');
-				rs += 'Invalid date ('+element.dueDate+') for ' + element.fldName + '\n';
-			} 
+			// only check on items with the "show" checkbox set
+			//// NOTE: checkbox array is zero-indexed, but the items are tagged with 1-indexed index values
+			////       And there's no checkbox for the first item
+			////       So "show item #2 checkbox" == show[0] !!!
+			if ((element.idxVal == 1) || (dr.showPlans[element.idxVal-2].value)) { 
+				// allow blank dates
+				if(!(element.date == '') && !(RegExp(dr.dateValidationPattern).test(element.date))) {
+					
+					console.log(element.fldName+' is bad ('+element.date+')');
+					rs += 'Invalid date ('+element.date+') for ' + element.fldName + '\n';
+				} 
+			}
 		});
 
 		return rs;
+	};
+	
+	// function to validate permission for route function
+	validateRoutePermission = function (dr) {
+		// init error list
+		var rs = '';
+
+		if(!dr.usrCanRoute) { rs = 'You do not currently have permission to Route this evaluation.';}
+		
+		return rs;
+	};
+
+	// function to validate requred fields for route function
+	validateRouteRequiredFields = function (dr) {
+		console.log('validateRouteRequiredFields');
+		
+		// init error list, error counter, weight counter
+		var rs = ''; 
+		var ec = 0; 
+		var wc = 0;
+		
+
+		/************************************
+		var i = 0;
+		console.log('checking showGoals by array index');
+		for(i = 0; i < 10; i++){
+			if (dr.showGoals[i]) { console.log('showGoals['+i+'].value = ' + dr.showGoals[i].value); }
+		}
+		i = 0;
+		console.log('checking showGoals by queue walk');
+		dr.showGoals.forEach(function(element) {
+			if (element) { console.log('element #'+ i + '.value = ' + element.value); }
+			i++;
+		});
+		************************************/
+
+		
+		// check goal evaluation fields ==================================================================
+		dr.goals.forEach(function(element) {
+			
+			// only check on items with the "show" checkbox set
+			//// NOTE: checkbox array is zero-indexed, but the items are tagged with 1-indexed index values
+			////       And there's no checkbox for the first item
+			////       So "show item #2 checkbox" == show[0] !!!
+			if ((element.idxVal == 1) || (dr.showGoals[element.idxVal-2].value)) { 
+			
+				// check fields required for pending self-assessment
+				if (dr.empWrite) {
+					if (!element.goal) {
+						ec++; rs += '        Evaluation Goal ' + element.idxVal + '\n'; 
+					}
+					if (!element.empApp) {
+						ec++; rs += '        Evaluation Goal ' + element.idxVal + ' Employee Appraisal\n';
+					}
+					if (!element.weight) {
+						ec++; rs += '        Evaluation Goal ' + element.idxVal + ' Weight\n';
+					}
+					if (!element.rating) {
+						ec++; rs += '        Evaluation Goal ' + element.idxVal + ' Rating\n';
+					}
+					
+					// keep a running count of the weights for the selected goals
+					wc += element.weight;
+				}
+
+				// check fields required for pending functional manager input
+				else if (dr.funMgrWrite) {
+					if (!element.funMgrApp) {
+						ec++; rs += '        Evaluation Goal ' + element.idxVal + ' Manager (dotted line) Appraisal\n';
+					}
+				}
+
+				// check fields required for manager appraisal				
+				else if(dr.mgrWrite) {
+					if (!element.managerApp) {
+						// ec++; rs += '        Evaluation Goal ' + element.idxVal + ' Manager Appraisal\n';	// not marked as required in spec
+					}
+				}				
+			}
+		});
+
+		// check total goal weight 
+		if (dr.empWrite && wc != 100) {
+			ec++; rs += '        The Development Goal Weights must add up to exactly 100\n';
+		}
+
+		
+		// check competencies ====================================================================================
+		dr.competencies.forEach(function(element) {
+						
+			// check fields required for pending self-assessment
+			if (dr.empWrite) {
+				if (!element.empApp) {
+					ec++; rs += '        ' + element.competency + ' - Employee Appraisal\n';
+				}
+				if (!element.rating) {
+					ec++; rs += '        ' + element.competency + ' - Rating\n';
+				}
+			}
+
+			// check fields required for pending functional manager input
+			else if (dr.funMgrWrite) {
+				if (!element.funMgrApp) {
+					// ec++; rs += '        ' + element.competency + ' - Manager (dotted line) Appraisal\n'; // not marked as required in spec
+				}
+			}
+
+			// check fields required for manager appraisal				
+			else if(dr.mgrWrite) {
+				if (!element.managerApp) {
+					ec++; rs += '        ' + element.competency + ' - Manager Appraisal\n';
+				}
+			}				
+		});
+		
+		// reset weight counter
+		wc = 0;
+		
+		// check future goal fields ============================================================================
+		dr.fGoals.forEach(function(element) {
+			
+			// only check on items with the "show" checkbox set
+			//// NOTE: checkbox array is zero-indexed, but the items are tagged with 1-indexed index values
+			////       And there's no checkbox for the first item
+			////       So "show item #2 checkbox" == show[0] !!!
+			if ((element.idxVal == 1) || (dr.showFGoals[element.idxVal-2].value)) {
+			
+				// check fields required for pending self-assessment
+				if (dr.empWrite) {
+					if (!element.goal) {
+						ec++; rs += '        SMART Goal ' + element.idxVal + '\n';
+					}
+					if (!element.measurement) {
+						ec++; rs += '        SMART Goal ' + element.idxVal + ' Measurement\n';
+					}
+					if (!element.results) {
+						ec++; rs += '        SMART Goal ' + element.idxVal + ' Expected Results\n';
+					}
+					if (!element.weight) {
+						ec++; rs += '        SMART Goal ' + element.idxVal + ' Weight\n';
+					}
+					if (!element.competency) {
+						ec++; rs += '        SMART Goal ' + element.idxVal + ' Competency\n';
+					}
+					if (!element.dueDate) {
+						ec++; rs += '        SMART Goal ' + element.idxVal + ' Due Date\n';
+					}
+					
+					// keep a running count of the weights for the selected goals
+					wc += element.weight;
+				}
+
+				// check fields required for pending functional manager input
+				else if (dr.funMgrWrite) {
+					// no requirements
+				}
+
+				// check fields required for manager appraisal				
+				else if(dr.mgrWrite) {
+					// no requirements
+				}				
+			}
+		});
+
+		// check total SMART goal weight  
+		if (dr.empWrite && wc != 100) {
+			ec++; rs += '        The SMART Goal Weights must add up to exactly 100\n';
+		}
+
+		
+		// check development plan fields ============================================================================
+		dr.devPlans.forEach(function(element) {
+			
+			// only check on items with the "show" checkbox set
+			//// NOTE: checkbox array is zero-indexed, but the items are tagged with 1-indexed index values
+			////       And there's no checkbox for the first item
+			////       So "show item #2 checkbox" == show[0] !!!
+			if ((element.idxVal == 1) || (dr.showPlans[element.idxVal-2].value)) {
+			
+				// check fields required for pending self-assessment
+				if (dr.empWrite) {
+					if (!element.behavior) {
+						ec++; rs += '        Development Goal ' + element.idxVal + ' Targeted Behavior\n';
+					}
+					if (!element.actionPlan) {
+						ec++; rs += '        Development Goal ' + element.idxVal + ' Action Plan\n';
+					}
+					if (!element.devType) {
+						ec++; rs += '        Development Goal ' + element.idxVal + ' Development Type\n';
+					}
+					if (!element.competency) {
+						ec++; rs += '        Development Goal ' + element.idxVal + ' Competency\n';
+					}
+					if (!element.date) {
+						ec++; rs += '        Development Goal ' + element.idxVal + ' Target Date\n';
+					}					
+				}
+
+				// check fields required for pending functional manager input
+				else if (dr.funMgrWrite) {
+					// no requirements
+				}
+
+				// check fields required for manager appraisal				
+				else if(dr.mgrWrite) {
+					// no requirements
+				}				
+			}
+		});
+
+		// check comments ===========================================================================================
+		if (dr.empWrite) {                    // check comment field required for pending self-assessment
+			if (dr.empComments) {
+				ec++; rs += '        Employee Comments\n';
+			}
+		}
+		else if (dr.funMgrWrite) {            // check comment field required for pending functional manager input
+			if (dr.funMgrComments) {
+				ec++; rs += '        Manager (dotted line) Comments\n';
+			}
+		}
+		else if(dr.mgrWrite) {                // check comment field required for manager appraisal				
+			if (dr.managerComments) {
+				ec++; rs += '        Manager Comments\n';
+			}
+		}				
+		
+		
+		// if error list not empty, add header
+		if (ec) { 
+			rs = '\nThe following field requirement' + ((ec > 1) ? 's ' : ' ') + 'must be met before you can route this evaluation:\n\n' + rs;
+		}
+		
+		return rs;
+		
+	};
+	
+
+	// function to test for empty string or whitespace-only string
+	String.prototype.isEmpty = function() {
+		return (this.length === 0 || !this.trim());
 	};
 }
 ]]></client_script>
@@ -286,6 +560,19 @@ textarea[readonly] {
 	background-color: #f6f1ed;
   
 }
+
+ @media print {
+    body * {
+        visibility: hidden;
+    }
+    #sp-row-content * {
+        visibility: visible;
+    }
+   
+   a[href]:after {
+    content: none;
+  }
+}
 </css>
         <data_table>sp_instance</data_table>
         <demo_data/>
@@ -346,10 +633,14 @@ textarea[readonly] {
 			if(action == 'save') {
 				
 				updatePDRRecord(input);
+				gs.addInfoMessage("Update saved");
 				
 			}
 			// perform Route action
 			else if(action == 'route') {
+				
+				// first, save updated fields
+				updatePDRRecord(input);
 				
 				//run Route action 
 				routePDRRecord(input);
@@ -365,24 +656,6 @@ textarea[readonly] {
 				loadPDRData(data);
 			}
 		}
-
-		console.log('After load...:');
-		console.log('..DATA..:');
-		console.log('...status:'+data.currentStatus);
-		console.log('...User  :'+data.sysUserID);
-		console.log('...Empl  :'+data.empRef);
-		console.log('...Mgr   :'+data.mgrRef);
-		console.log('...FMgr  :'+data.funcMgrRef);
-		console.log('...2ndLvl:'+data.secLvlMgrRef);
-		console.log('...access:'+data.usrCanSave);
-		console.log('..INPUT..:');
-		console.log('...status:'+input.currentStatus);
-		console.log('...User  :'+input.sysUserID);
-		console.log('...Empl  :'+input.empRef);
-		console.log('...Mgr   :'+input.mgrRef);
-		console.log('...FMgr  :'+input.funcMgrRef);
-		console.log('...2ndLvl:'+input.secLvlMgrRef);
-		console.log('...access:'+input.usrCanSave);
 
 		// Done.
 		
@@ -454,10 +727,12 @@ textarea[readonly] {
 		console.log('Access:'+pdrRec.usrCanSave);
 		
 		
-		var currentUser = gs.getUser().getID();
-		pdrRec.empWrite = currentUser == pdrRec.sysUserID && pdrRec.currentStatus == 2;
-		pdrRec.funMgrWrite = currentUser == pdrRec.funcMgrRef && pdrRec.currentStatus == 3;
-		pdrRec.mgrWrite = currentUser == pdrRec.mgrRef && pdrRec.currentStatus == 4;
+		var currentUser    = gs.getUser().getID();
+		pdrRec.empWrite    = (currentUser == pdrRec.sysUserID)  && (pdrRec.currentStatus == 2);
+		pdrRec.funMgrWrite = (currentUser == pdrRec.funcMgrRef) && (pdrRec.currentStatus == 3);
+		pdrRec.mgrWrite    = (currentUser == pdrRec.mgrRef)     && (pdrRec.currentStatus == 4);
+
+		pdrRec.usrCanRoute = (pdrRec.empWrite || pdrRec.funMgrWrite || pdrRec.mgrWrite);
 		
 		var tableName = '';
 
@@ -567,9 +842,9 @@ textarea[readonly] {
 					goal:        fGoal.getValue('u_fg_goal_' + i),
 					measurement: fGoal.getValue('u_fg_measurement_' + i),
 					results:     fGoal.getValue('u_fg_results_' + i),
-					dueDate: fixDate(fGoal.getValue('u_fg_due_date_' + i),'get'),
+					dueDate:	 fixDate(fGoal.getValue('u_fg_due_date_' + i),'get'),
 					competency:  fGoal.getValue('u_fg_competency_' + i),
-					compList:		 fGoal.getElement('u_fg_competency_' + i).getChoices(),
+					compList:    fGoal.getElement('u_fg_competency_' + i).getChoices(),
 					weight:      parseInt(fGoal.getValue('u_fg_weight_' + i)),
 					idxVal:      i,
 					formFieldId: 'dueDate'+i,
@@ -610,16 +885,16 @@ textarea[readonly] {
 				
 				console.log('DB.devplan '+i+': tbl:'+tableName+', behavior: '+devPlan.getValue('u_dev_targeted_behavior_' + i));
 				var sdevPlan = {
-					table:      tableName,
-					sysId:      devPlan.getUniqueValue(),
-					behavior:   devPlan.getValue('u_dev_targeted_behavior_' + i),
-					actionPlan: devPlan.getValue('u_dev_action_plan_' + i),
-					devType:    devPlan.getValue('u_dev_type_' + i),
-					devOptions:    devPlan.getElement('u_dev_type_' + i).getChoices(),
-					competency: devPlan.getValue('u_dev_competency_' + i),
-					compOptions:   devPlan.getElement('u_dev_competency_' + i).getChoices(),
-					date:       fixDate(devPlan.getValue('u_dev_target_date_' + i),'get'),
-					idxVal:     i,
+					table:       tableName,
+					sysId:       devPlan.getUniqueValue(),
+					behavior:    devPlan.getValue('u_dev_targeted_behavior_' + i),
+					actionPlan:  devPlan.getValue('u_dev_action_plan_' + i),
+					devType:     devPlan.getValue('u_dev_type_' + i),
+					devOptions:  devPlan.getElement('u_dev_type_' + i).getChoices(),
+					competency:  devPlan.getValue('u_dev_competency_' + i),
+					compOptions: devPlan.getElement('u_dev_competency_' + i).getChoices(),
+					date:        fixDate(devPlan.getValue('u_dev_target_date_' + i),'get'),
+					idxVal:      i,
 					formFieldId: 'dueDate'+i	,
 					showing:     (i == 1 || pdrRec.greval.getValue('u_add_dev_goal_' + i) == 1) ? true : false,
 					fldName:     'Development Goal ' + i
@@ -776,9 +1051,6 @@ textarea[readonly] {
 		var updResult = pdrRec.greval.update();
 		console.log('update='+updResult);
 		console.log('done');
-		
-		gs.addInfoMessage("Update saved");
-
 
 	}
 
@@ -854,7 +1126,7 @@ textarea[readonly] {
         <sys_created_on>2017-10-16 16:05:28</sys_created_on>
         <sys_customer_update>true</sys_customer_update>
         <sys_id>eec3839213b98f806b3330128144b028</sys_id>
-        <sys_mod_count>625</sys_mod_count>
+        <sys_mod_count>679</sys_mod_count>
         <sys_name>PDR Content</sys_name>
         <sys_package display_value="Performance &amp; Development Review" source="x_pdm_pdr">5c227acc13b50bc0995fb6d96144b0f9</sys_package>
         <sys_policy/>
@@ -862,7 +1134,7 @@ textarea[readonly] {
         <sys_scope display_value="Performance &amp; Development Review">5c227acc13b50bc0995fb6d96144b0f9</sys_scope>
         <sys_update_name>sp_widget_eec3839213b98f806b3330128144b028</sys_update_name>
         <sys_updated_by>jonathanv_adm</sys_updated_by>
-        <sys_updated_on>2017-11-29 16:11:01</sys_updated_on>
+        <sys_updated_on>2017-12-01 02:06:56</sys_updated_on>
         <template><![CDATA[<script type="text/ng-template" id="compModal">
 	<div class="panel panel-default">
 		<div class="panel-heading" style="background-color: Orange; color: white;">
@@ -1043,12 +1315,14 @@ textarea[readonly] {
                       <label><strong>Due date:</strong></label>
                       <input type="text" name={{fGoal.formFieldId}}
                              ng-model="fGoal.dueDate" 
-                             ng-pattern="data.dateValidationPattern"
                              ng-readonly="!data.empWrite"
                              > 
-						<div ng-hide="futureForm[fGoal.formFieldId].$valid">
+                             <!-- ng-pattern="data.dateValidationPattern" > -->
+						<!-- <div ng-hide="futureForm[fGoal.formFieldId].$valid">
 							<font color='#ff0033'><strong>Please enter a valid date in the format 'mm/dd/yyyy'</strong></font>
-						</div>
+						</div> -->
+						<!-- Bob A: I removed the ng-pattern logic because when the field doesn't match the pattern 
+						     rather than merely flag the field, it makes the field eval as undefined in the client controller --> 
                     </td>
                   </tr> 
                 </table>
@@ -1098,12 +1372,14 @@ textarea[readonly] {
                       <label><strong>Target date:</strong></label>
                       <input type="text" name={{item.formFieldId}} 
                              ng-model="item.date"
-                             ng-pattern="data.dateValidationPattern"
                              ng-readonly="!data.empWrite"
                              >  
-					  <div ng-hide="developmentForm[item.formFieldId].$valid">
+                             <!-- ng-pattern="data.dateValidationPattern" > -->
+					  <!--<div ng-hide="developmentForm[item.formFieldId].$valid">
 					  	<font color='#ff0033'><strong>Please enter a valid date in the format 'mm/dd/yyyy'</strong></font>
-					  </div>
+					  </div> -->
+					  <!-- Bob A: I removed the ng-pattern logic because when the field doesn't match the pattern 
+						   rather than merely flag the field, it makes the field eval as undefined in the client controller --> 
                     </td>
                   </tr> 
                 </table>
@@ -1145,13 +1421,22 @@ textarea[readonly] {
       </div>
   </div>
   
-  <div class="panel-footer">
-      <button ng-mousedown="c.triggerUIAction(action)" ng-repeat="action in c.getUIActions('button')" class="btn btn-default action-btn">{{action.name}}</button>
+  <div class="panel-footer hidden-print">
+    
       <span>{{status}}</span>
       <!-- <button ng-if="c.getPrimaryAction()" type="submit" ng-mousedown="c.saveEvaluation()" class="btn btn-primary action-btn pull-right">${Save} <span ng-if="saveButtonSuffix">(${{{saveButtonSuffix}}})</span></button> -->
 	  <!-- <button type="submit" ng-mousedown="c.uiAction('load')" class="btn btn-primary action-btn pull-right">Load</button> -->
-	  <button type="submit" ng-disabled="!data.usrCanSave" ng-mousedown="c.uiAction('route')" class="btn btn-primary action-btn pull-right">Route</button>
-	  <button type="submit" ng-disabled="!data.usrCanSave" ng-mousedown="c.uiAction('save')" class="btn btn-primary action-btn pull-right">Save</button>
+	  <button type="submit" ng-disabled="!data.usrCanRoute" ng-mousedown="c.uiAction('route')" class="btn btn-primary action-btn">
+      <span class="glyphicon glyphicon-share"></span> Route
+    </button>
+	  <div class="btn-group pull-right">
+      <button type="submit"                                 ng-mousedown="c.uiAction('print')" class="btn btn-default action-btn">
+        <span class="glyphicon glyphicon-print"></span> Print
+      </button>
+      <button type="submit" ng-disabled="!data.usrCanSave"  ng-mousedown="c.uiAction('save')" class="btn btn-default action-btn">
+        <span class="glyphicon glyphicon-cloud-upload"></span> Save
+      </button>
+    </div>
 	  <div style="clear: both;"></div>
       <div ng-if="mandatory.length" class="alert alert-info" style="margin-top: .5em">
         <span ng-if="mandatory.length > 0">${Required information} </span>
