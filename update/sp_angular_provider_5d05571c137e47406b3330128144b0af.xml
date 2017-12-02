@@ -22,7 +22,7 @@
         <sys_class_name>sp_angular_provider</sys_class_name>
         <sys_created_by>jonathanv_adm</sys_created_by>
         <sys_created_on>2017-11-29 05:21:15</sys_created_on>
-        <sys_customer_update>true</sys_customer_update>
+        <sys_customer_update>false</sys_customer_update>
         <sys_id>5d05571c137e47406b3330128144b0af</sys_id>
         <sys_mod_count>20</sys_mod_count>
         <sys_name>jvAutosize</sys_name>

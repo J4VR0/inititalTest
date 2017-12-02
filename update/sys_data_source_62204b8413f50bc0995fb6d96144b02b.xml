@@ -24,7 +24,7 @@
         <last_run_datetime/>
         <ldap_target/>
         <maximum_rows/>
-        <mid_server display_value="PDCHDEVDC01_GWP_DEV">74abab5513bab600995fb6d96144b05e</mid_server>
+        <mid_server display_value="">74abab5513bab600995fb6d96144b05e</mid_server>
         <name>JDBC Oracle PDR Competencies v2</name>
         <oracle_port>61001</oracle_port>
         <oracle_sid>PKDT</oracle_sid>
@@ -42,7 +42,7 @@
         <sys_class_name>sys_data_source</sys_class_name>
         <sys_created_by>jonathanv_adm</sys_created_by>
         <sys_created_on>2017-10-09 16:06:44</sys_created_on>
-        <sys_customer_update>true</sys_customer_update>
+        <sys_customer_update>false</sys_customer_update>
         <sys_id>62204b8413f50bc0995fb6d96144b02b</sys_id>
         <sys_mod_count>3</sys_mod_count>
         <sys_name>JDBC Oracle PDR Competencies v2</sys_name>

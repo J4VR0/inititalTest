@@ -21,7 +21,7 @@
         <sys_class_name>sys_db_object</sys_class_name>
         <sys_created_by>jonathanv_adm</sys_created_by>
         <sys_created_on>2017-10-09 15:08:25</sys_created_on>
-        <sys_customer_update>true</sys_customer_update>
+        <sys_customer_update>false</sys_customer_update>
         <sys_id>7da2f6cc13b50bc0995fb6d96144b004</sys_id>
         <sys_mod_count>2</sys_mod_count>
         <sys_name>Competencies</sys_name>

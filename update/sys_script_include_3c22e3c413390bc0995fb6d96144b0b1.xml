@@ -347,7 +347,7 @@ PDRMaster.prototype = {
         <sys_class_name>sys_script_include</sys_class_name>
         <sys_created_by>jonathanv_adm</sys_created_by>
         <sys_created_on>2017-10-09 18:33:26</sys_created_on>
-        <sys_customer_update>true</sys_customer_update>
+        <sys_customer_update>false</sys_customer_update>
         <sys_id>3c22e3c413390bc0995fb6d96144b0b1</sys_id>
         <sys_mod_count>12</sys_mod_count>
         <sys_name>PDRMaster</sys_name>

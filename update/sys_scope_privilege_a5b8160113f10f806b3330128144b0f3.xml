@@ -7,7 +7,7 @@
         <sys_class_name>sys_scope_privilege</sys_class_name>
         <sys_created_by>jonathanv_adm</sys_created_by>
         <sys_created_on>2017-10-12 15:44:51</sys_created_on>
-        <sys_customer_update>true</sys_customer_update>
+        <sys_customer_update>false</sys_customer_update>
         <sys_id>a5b8160113f10f806b3330128144b0f3</sys_id>
         <sys_mod_count>0</sys_mod_count>
         <sys_name>u_pe_development_goal_6</sys_name>
