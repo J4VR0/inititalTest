@@ -21,13 +21,13 @@
 	};
 	
 	c.mandatory_filled= function(field){
-		console.log('value: ' + field);
+		//console.log('value: ' + field);
 		var answer = false;
 		
 		if(field)
 			answer = true;
 		
-		console.log('answer:' + answer);
+		//console.log('answer:' + answer);
 		
 		return answer;
 	};
@@ -108,6 +108,7 @@
 		// spcifically, throw an error to the user if any of the date fields are invalid
 
 		console.log('button='+action);
+
 		if(action == 'route') {
 			performRoute(c.data);
 		}
@@ -119,6 +120,12 @@
 		}
 		if(action == 'load') {
 			performLoad(c.data);
+		}
+		if(action == 'approve') {
+			performApprove(c.data);
+		}
+		if(action == 'acknowledge') {
+			performAcknowledge(c.data);
 		}
 
 	};
@@ -185,6 +192,27 @@
 		c.server.update().then(function() {dr.action = undefined; /*c.server.refresh();*/ });
 
 	};
+	
+	// function to perform route
+	performApprove = function(dr) {
+		
+		var rslt = validateApprovePermission(dr);
+	
+		if(rslt == '') {
+			dr.action = 'approve';
+			c.server.update().then(function() {dr.action = undefined; });
+		}
+		else {
+			alert(rslt);
+		}
+	};
+	
+	performAcknowledge = function(dr) {
+		
+			dr.action = 'acknowledge';
+			c.server.update().then(function() {dr.action = undefined; });
+		
+	};
 
 	
 	// function to validate date fields
@@ -236,6 +264,15 @@
 		var rs = '';
 
 		if(!dr.usrCanRoute) { rs = 'You do not currently have permission to Route this evaluation.';}
+		
+		return rs;
+	};
+	
+	validateApprovePermission = function (dr) {
+		// init error list
+		var rs = '';
+
+		if(!dr.usrCanApprove) { rs = 'You do not currently have permission to Route this evaluation.';}
 		
 		return rs;
 	};
@@ -654,6 +691,22 @@ textarea[readonly] {
 			else if(action == 'load')
 			{
 				loadPDRData(data);
+			}else if(action == 'approve'){
+				
+				console.log('Execute approve');
+				
+				approvePDRRecord(input);
+				
+				//reload data, since the route action invokes 
+				//server-side scripts that might alter the underlying data
+				loadPDRData(data);
+			}else if(action == 'acknowledge'){
+				
+				acknowledgePDRRecord(input);
+				
+				//reload data, since the route action invokes 
+				//server-side scripts that might alter the underlying data
+				loadPDRData(data);
 			}
 		}
 
@@ -692,6 +745,11 @@ textarea[readonly] {
 		console.log('Mgr   :'+pdrRec.mgrRef);
 		console.log('FMgr  :'+pdrRec.funcMgrRef);
 		console.log('2ndLvl:'+pdrRec.secLvlMgrRef);
+		
+		var currentUser    = gs.getUser().getID();
+		pdrRec.empWrite    = (currentUser == pdrRec.sysUserID)  && (pdrRec.currentStatus == 2);
+		pdrRec.funMgrWrite = (currentUser == pdrRec.funcMgrRef) && (pdrRec.currentStatus == 3);
+		pdrRec.mgrWrite    = (currentUser == pdrRec.mgrRef)     && (pdrRec.currentStatus == 4);
 
 		console.log('Check Access...');
 		if('usrCanSave' in pdrRec) {console.log('...currently '+pdrRec.usrCanSave);}
@@ -701,23 +759,23 @@ textarea[readonly] {
 			case '7':
 			case '9':
 				console.log('...check Empl');
-				pdrRec.usrCanSave = (pdrRec.empRef == pdrRec.sysUserID);
+				pdrRec.usrCanSave = (pdrRec.empRef == currentUser);
 				break;			
 			//// Functional Reports waiting for User
 			case '3':
 				console.log('...check FMgr');
-				pdrRec.usrCanSave = (pdrRec.funcMgrRef == pdrRec.sysUserID);
+				pdrRec.usrCanSave = (pdrRec.funcMgrRef == currentUser);
 				break;
 			//// Direct Reports waiting for User
 			case '4':
 			case '6':
 				console.log('...check Mgr');
-				pdrRec.usrCanSave = (pdrRec.mgrRef == pdrRec.sysUserID);
+				pdrRec.usrCanSave = (pdrRec.mgrRef == currentUser);
 				break;
 			//// Second Level Reports waiting for User
 			case '5':
 				console.log('...check 2ndLvl');
-				pdrRec.usrCanSave = (pdrRec.secLvlMgrRef == pdrRec.sysUserID);
+				pdrRec.usrCanSave = (pdrRec.secLvlMgrRef == currentUser);
 				break;
 			//// Nope
 			default:
@@ -725,14 +783,13 @@ textarea[readonly] {
 				pdrRec.usrCanSave = false;
 		}
 		console.log('Access:'+pdrRec.usrCanSave);
-		
-		
-		var currentUser    = gs.getUser().getID();
-		pdrRec.empWrite    = (currentUser == pdrRec.sysUserID)  && (pdrRec.currentStatus == 2);
-		pdrRec.funMgrWrite = (currentUser == pdrRec.funcMgrRef) && (pdrRec.currentStatus == 3);
-		pdrRec.mgrWrite    = (currentUser == pdrRec.mgrRef)     && (pdrRec.currentStatus == 4);
 
 		pdrRec.usrCanRoute = (pdrRec.empWrite || pdrRec.funMgrWrite || pdrRec.mgrWrite);
+		pdrRec.usrCanApprove = (currentUser == pdrRec.secLvlMgrRef && pdrRec.currentStatus == '5');
+		pdrRec.usrCanAcknowledge = (currentUser == pdrRec.mgrRef && pdrRec.currentStatus == '6') || (currentUser == pdrRec.empRef && pdrRec.currentStatus == '7') ;
+		
+		//console.log('Route: ' + pdrRec.usrCanRoute);
+		//console.log(pdrRec.empWrite + ' - ' + pdrRec.funMgrWrite + ' - ' + pdrRec.mgrWrite)
 		
 		var tableName = '';
 
@@ -1055,26 +1112,54 @@ textarea[readonly] {
 	}
 
 	function routePDRRecord(pdrRec) {
+		
+		var currentUser    = gs.getUser().getID();
 
 		if(pdrRec.currentStatus == '2' && pdrRec.sysUserID == pdrRec.empRef){
 			//Route for Functional Manager Input if Functional Manager exist, else route to manager
 			pdrRec.greval.setValue('u_route_from_psa', true);
 			pdrRec.greval.setValue('u_returned_to_employee', false);
 		}
-		else if(pdrRec.currentStatus == '3' && pdrRec.sysUserID == pdrRec.funcMgrRef){
+		else if(pdrRec.currentStatus == '3' && currentUser == pdrRec.funcMgrRef){
 			//Route from Functional Manager Input to Pending Manager Appraisal
 			pdrRec.greval.setValue('u_route_from_fncmgr', true);
 		}
-		else if(pdrRec.currentStatus == '4' && pdrRec.sysUserID == pdrRec.mgrRef){
+		else if(pdrRec.currentStatus == '4' && currentUser == pdrRec.mgrRef){
 			//Route from Pending Manager Appraisal to Completed
 			pdrRec.greval.setValue('u_route_from_manager', true);
 		}
-		else if(pdrRec.currentStatus == '9' && pdrRec.sysUserID == pdrRec.empRef){
+		else if(pdrRec.currentStatus == '9' && currentUser == pdrRec.empRef){
 			//Route from Mid Year to Completed
 			pdrRec.greval.setValue('u_route_from_mid_year', true);
 			pdrRec.greval.setValue('u_route_to_complete', true);
 		}
 		
+		// push to main table, then reload data since the route action will invoke server side business rules
+		pdrRec.greval.update();
+	}
+	
+	function approvePDRRecord(pdrRec){
+		
+		//console.log('Ready to approve ' + pdrRec.currentStatus);
+		
+		if(pdrRec.currentStatus == '5' && pdrRec.usrCanApprove){
+			
+			pdrRec.greval.setValue('u_status', 6);
+			
+		}
+		
+		// push to main table, then reload data since the route action will invoke server side business rules
+		pdrRec.greval.update();
+	}
+	
+	function acknowledgePDRRecord(pdrRec){
+		
+		if(pdrRec.currentStatus == '6' && pdrRec.usrCanAcknowledge){
+				pdrRec.greval.setValue('u_status', 7);
+		} else if(pdrRec.currentStatus == '7' && pdrRec.usrCanAcknowledge){
+				pdrRec.greval.setValue('u_status', 8);
+				pdrRec.greval.setValue('u_completed_reason', 'Completed by employee');
+		}
 		// push to main table, then reload data since the route action will invoke server side business rules
 		pdrRec.greval.update();
 	}
@@ -1126,7 +1211,7 @@ textarea[readonly] {
         <sys_created_on>2017-10-16 16:05:28</sys_created_on>
         <sys_customer_update>true</sys_customer_update>
         <sys_id>eec3839213b98f806b3330128144b028</sys_id>
-        <sys_mod_count>681</sys_mod_count>
+        <sys_mod_count>704</sys_mod_count>
         <sys_name>PDR Content</sys_name>
         <sys_package display_value="Performance &amp; Development Review" source="x_pdm_pdr">5c227acc13b50bc0995fb6d96144b0f9</sys_package>
         <sys_policy/>
@@ -1134,7 +1219,7 @@ textarea[readonly] {
         <sys_scope display_value="Performance &amp; Development Review">5c227acc13b50bc0995fb6d96144b0f9</sys_scope>
         <sys_update_name>sp_widget_eec3839213b98f806b3330128144b028</sys_update_name>
         <sys_updated_by>jonathanv_adm</sys_updated_by>
-        <sys_updated_on>2017-12-02 00:41:49</sys_updated_on>
+        <sys_updated_on>2017-12-02 18:47:59</sys_updated_on>
         <template><![CDATA[<script type="text/ng-template" id="compModal">
 	<div class="panel panel-default">
 		<div class="panel-heading" style="background-color: Orange; color: white;">
@@ -1269,14 +1354,18 @@ textarea[readonly] {
                 </table>
               </div>
               <div class="panel panel-body">
-                <label><strong>Employee Appraisal:</strong></label> 
-                <textarea ng-model="item.empApp" md-maxlength="2000" ng-readonly="!data.empWrite"></textarea>
+                <label>
+                  <span class="field-decorations">
+                    <span class="fa fa-asterisk mandatory" ng-show="data.empWrite" ng-class="{'mandatory-filled':c.mandatory_filled(item.empApp)}"></span>
+                  </span>
+                  <strong>Employee Appraisal:</strong></label> 
+                <textarea jv-autosize ng-model="item.empApp" md-maxlength="2000" ng-readonly="!data.empWrite"></textarea>
                 <div ng-show="data.hasFunctionalMgr">
                   <label><strong>Manager(dotted line) Appraisal:</strong></label> 
-                  <textarea ng-model="item.funMgrApp" md-maxlength="2000" ng-readonly="!data.funMgrWrite"></textarea>
+                  <textarea jv-autosize ng-model="item.funMgrApp" md-maxlength="2000" ng-readonly="!data.funMgrWrite"></textarea>
                 </div>
                 <label><strong>Manager Appraisal:</strong></label> 
-                <textarea ng-model="item.managerApp" md-maxlength="2000" ng-readonly="!data.mgrWrite"></textarea>
+                <textarea jv-autosize ng-model="item.managerApp" md-maxlength="2000" ng-readonly="!data.mgrWrite"></textarea>
               </div>
               <div class="panel-footer item-footer">
                 <table class="add-remove">
@@ -1285,8 +1374,12 @@ textarea[readonly] {
                       <label><strong>Weight: </strong></label>All Competencies are equally wieghted
                     </td>
                     <td style="text-align: right;">
-                      <label><strong>Rating:</strong></label>
-                      <span uib-rating ng-model="item.rating" ng-click="data.rating_competencies = c.updateBasicRatingAvg(data.competencies)"  ng-readonly="!data.empWrite" max="5" style="color:Orange;"></span>
+                      <label>
+                        <span class="field-decorations">
+                          <span class="fa fa-asterisk mandatory" ng-show="data.empWrite || data.mgrWrite" ng-class="{'mandatory-filled':c.mandatory_filled(item.rating)}"></span>
+                        </span>
+                        <strong>Rating:</strong></label>
+                      <span uib-rating ng-model="item.rating" ng-click="data.rating_competencies = c.updateBasicRatingAvg(data.competencies)"  ng-disabled="!data.empWrite" max="5" style="color:Orange;"></span>
                     </td>
                   </tr> 
                 </table>
@@ -1303,23 +1396,23 @@ textarea[readonly] {
             <div ng-show="data.showFGoals[$index - 1].value || $first" class="panel panel-default md-block">
               <div class="panel panel-body">
                 <label><strong>{{data.nextYear}} Goal {{$index + 1}}:</strong></label> 
-                <textarea ng-model="fGoal.goal" ng-keyup="c.resize($event)" ng-readonly="!data.empWrite"></textarea>
+                <textarea ng-model="fGoal.goal" ng-keyup="c.resize($event)" ng-readonly="!(data.empWrite || data.mgrWrite)"></textarea>
                 <label><strong>Measurement:</strong></label> 
-                <textarea ng-model="fGoal.measurement" ng-keyup="c.resize($event)" ng-readonly="!data.empWrite"></textarea>
+                <textarea ng-model="fGoal.measurement" ng-keyup="c.resize($event)" ng-readonly="!(data.empWrite || data.mgrWrite)"></textarea>
                 <label><strong>Expected results:</strong></label> 
-                <textarea ng-model="fGoal.results" ng-keyup="c.resize($event)" ng-readonly="!data.empWrite"></textarea>
+                <textarea ng-model="fGoal.results" ng-keyup="c.resize($event)" ng-readonly="!(data.empWrite || data.mgrWrite)"></textarea>
               </div>
               <div class="panel-footer item-footer">
                 <table class="add-remove">
                   <tr>
                     <td>
                       <label><strong>Weight:</strong></label>
-                      <input style="color:black;" type="number" ng-model="fGoal.weight" min="0" max="100"  ng-readonly="!data.empWrite"
+                      <input style="color:black;" type="number" ng-model="fGoal.weight" min="0" max="100"  ng-readonly="!(data.empWrite || data.mgrWrite)"
                              required="data.showGoals[$index - 1].value || $first">
                     </td>
                     <td style="text-align: center;">
                       <label><strong>Competency:</strong></label>
-                      <select ng-model="fGoal.competency" ng-options="option for option in fGoal.compList" ng-readonly="!data.empWrite"></select>
+                      <select ng-model="fGoal.competency" ng-options="option for option in fGoal.compList" ng-readonly="!(data.empWrite || data.mgrWrite)"></select>
                     </td>
 					<td  style="text-align: right;">
 					</td>
@@ -1327,7 +1420,7 @@ textarea[readonly] {
                       <label><strong>Due date:</strong></label>
                       <input type="text" name={{fGoal.formFieldId}}
                              ng-model="fGoal.dueDate" 
-                             ng-readonly="!data.empWrite"
+                             ng-readonly="!(data.empWrite || data.mgrWrite)"
                              > 
                              <!-- ng-pattern="data.dateValidationPattern" > -->
 						<!-- <div ng-hide="futureForm[fGoal.formFieldId].$valid">
@@ -1365,26 +1458,26 @@ textarea[readonly] {
               <div class="panel-heading item-heading"><strong>Development Goal {{$index + 1}}</strong></div>       
               <div class="panel panel-body">
                 <label><strong>Targeted Behavior:</strong></label> 
-                <textarea ng-model="item.behavior" ng-keyup="c.resize($event)" ng-readonly="!data.empWrite"></textarea>
+                <textarea ng-model="item.behavior" ng-keyup="c.resize($event)" ng-readonly="!(data.empWrite || data.mgrWrite)"></textarea>
                 <label><strong>Action Plan:</strong></label> 
-                <textarea ng-model="item.actionPlan" ng-keyup="c.resize($event)" ng-readonly="!data.empWrite"></textarea>
+                <textarea ng-model="item.actionPlan" ng-keyup="c.resize($event)" ng-readonly="!(data.empWrite || data.mgrWrite)"></textarea>
               </div>
               <div class="panel-footer item-footer">
                 <table class="add-remove">
                   <tr>
                     <td>
                       <label><strong>Development Type:</strong></label>
-                      <select ng-model="item.devType" ng-options="option for option in item.devOptions" ng-readonly="!data.empWrite"></select>
+                      <select ng-model="item.devType" ng-options="option for option in item.devOptions" ng-readonly="!(data.empWrite || data.mgrWrite)"></select>
                     </td>
                     <td style="text-align: center;">
                       <label><strong>Competency:</strong></label>
-                      <select ng-model="item.competency" ng-options="option for option in item.compOptions" ng-readonly="!data.empWrite"></select>
+                      <select ng-model="item.competency" ng-options="option for option in item.compOptions" ng-readonly="!(data.empWrite || data.mgrWrite)"></select>
                     </td>
                     <td style="text-align: right;">
                       <label><strong>Target date:</strong></label>
                       <input type="text" name={{item.formFieldId}} 
                              ng-model="item.date"
-                             ng-readonly="!data.empWrite"
+                             ng-readonly="!(data.empWrite || data.mgrWrite)"
                              >  
                              <!-- ng-pattern="data.dateValidationPattern" > -->
 					  <!--<div ng-hide="developmentForm[item.formFieldId].$valid">
@@ -1438,9 +1531,18 @@ textarea[readonly] {
       <span>{{status}}</span>
       <!-- <button ng-if="c.getPrimaryAction()" type="submit" ng-mousedown="c.saveEvaluation()" class="btn btn-primary action-btn pull-right">${Save} <span ng-if="saveButtonSuffix">(${{{saveButtonSuffix}}})</span></button> -->
 	  <!-- <button type="submit" ng-mousedown="c.uiAction('load')" class="btn btn-primary action-btn pull-right">Load</button> -->
-	  <button type="submit" ng-disabled="!data.usrCanRoute" ng-mousedown="c.uiAction('route')" class="btn btn-primary action-btn">
-      <span class="glyphicon glyphicon-share"></span> Route
-    </button>
+    <div class="btn-group">
+      <button type="submit" ng-show="data.usrCanRoute" ng-mousedown="c.uiAction('route')" class="btn btn-primary action-btn">
+        <span class="glyphicon glyphicon-share"></span> Route
+      </button>
+      <button type="submit" ng-show="data.usrCanApprove" ng-mousedown="c.uiAction('approve')" class="btn btn-primary action-btn">
+        <span class="glyphicon glyphicon-share"></span> Approve
+      </button>
+       <button type="submit" ng-show="data.usrCanAcknowledge" ng-mousedown="c.uiAction('acknowledge')" class="btn btn-primary action-btn">
+        <span class="glyphicon glyphicon-share"></span> Acknowledge
+      </button>
+      
+    </div>
 	  <div class="btn-group pull-right">
       <button type="submit"                                 ng-mousedown="c.uiAction('print')" class="btn btn-default action-btn">
         <span class="glyphicon glyphicon-print"></span> Print
