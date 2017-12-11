@@ -24,7 +24,7 @@
         <last_run_datetime/>
         <ldap_target/>
         <maximum_rows/>
-        <mid_server display_value="">74abab5513bab600995fb6d96144b05e</mid_server>
+        <mid_server display_value="PDCHTESTDC01_GWP_TEST">d38174f7131f2a00f62c36666144b097</mid_server>
         <name>JDBC Oracle PDR Competencies v2</name>
         <oracle_port>61001</oracle_port>
         <oracle_sid>PKDT</oracle_sid>
@@ -42,9 +42,9 @@
         <sys_class_name>sys_data_source</sys_class_name>
         <sys_created_by>jonathanv_adm</sys_created_by>
         <sys_created_on>2017-10-09 16:06:44</sys_created_on>
-        <sys_customer_update>false</sys_customer_update>
+        <sys_customer_update>true</sys_customer_update>
         <sys_id>62204b8413f50bc0995fb6d96144b02b</sys_id>
-        <sys_mod_count>3</sys_mod_count>
+        <sys_mod_count>4</sys_mod_count>
         <sys_name>JDBC Oracle PDR Competencies v2</sys_name>
         <sys_package display_value="Performance &amp; Development Review" source="x_pdm_pdr">5c227acc13b50bc0995fb6d96144b0f9</sys_package>
         <sys_policy/>
@@ -52,7 +52,7 @@
         <sys_scope display_value="Performance &amp; Development Review">5c227acc13b50bc0995fb6d96144b0f9</sys_scope>
         <sys_update_name>sys_data_source_62204b8413f50bc0995fb6d96144b02b</sys_update_name>
         <sys_updated_by>jonathanv_adm</sys_updated_by>
-        <sys_updated_on>2017-10-09 19:02:03</sys_updated_on>
+        <sys_updated_on>2017-12-02 16:47:34</sys_updated_on>
         <table_name>APPS.XXPKD_LEDCO_COMPETENCIES_V </table_name>
         <type>JDBC</type>
         <use_integrated_authentication>false</use_integrated_authentication>

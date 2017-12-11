@@ -79,6 +79,7 @@
 	stringQuery += '^NQu_manager=' + cUser + '^u_statusIN4,6'; //+ Direct Reports waiting for me
 	stringQuery += '^NQu_second_level_manager=' + cUser + '^u_status=5'; //+ Second Level Reports waiting for me
 	gr.addEncodedQuery(stringQuery);
+	gr.addQuery('u_employee_name.active = true');
 	gr.orderBy('u_employee_name.name');
 
 	/*if (options.order_direction == "asc")
@@ -158,9 +159,9 @@
         <sys_class_name>sp_widget</sys_class_name>
         <sys_created_by>jonathanv_adm</sys_created_by>
         <sys_created_on>2017-10-12 18:31:26</sys_created_on>
-        <sys_customer_update>false</sys_customer_update>
+        <sys_customer_update>true</sys_customer_update>
         <sys_id>f5def68113350f806b3330128144b09c</sys_id>
-        <sys_mod_count>41</sys_mod_count>
+        <sys_mod_count>42</sys_mod_count>
         <sys_name>My Active PDRS</sys_name>
         <sys_package display_value="Performance &amp; Development Review" source="x_pdm_pdr">5c227acc13b50bc0995fb6d96144b0f9</sys_package>
         <sys_policy/>
@@ -168,7 +169,7 @@
         <sys_scope display_value="Performance &amp; Development Review">5c227acc13b50bc0995fb6d96144b0f9</sys_scope>
         <sys_update_name>sp_widget_f5def68113350f806b3330128144b09c</sys_update_name>
         <sys_updated_by>jonathanv_adm</sys_updated_by>
-        <sys_updated_on>2017-10-13 16:11:01</sys_updated_on>
+        <sys_updated_on>2017-12-02 17:27:03</sys_updated_on>
         <template><![CDATA[<div class="panel panel-{{c.options.color}} b" ng-if="always_show || data.list.length">
   <div class="panel-heading">
     <h4 class="panel-title">{{c.options.title}}</h4>
