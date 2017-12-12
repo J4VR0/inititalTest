@@ -1211,7 +1211,7 @@ textarea[readonly] {
         <sys_created_on>2017-10-16 16:05:28</sys_created_on>
         <sys_customer_update>true</sys_customer_update>
         <sys_id>eec3839213b98f806b3330128144b028</sys_id>
-        <sys_mod_count>704</sys_mod_count>
+        <sys_mod_count>706</sys_mod_count>
         <sys_name>PDR Content</sys_name>
         <sys_package display_value="Performance &amp; Development Review" source="x_pdm_pdr">5c227acc13b50bc0995fb6d96144b0f9</sys_package>
         <sys_policy/>
@@ -1219,7 +1219,7 @@ textarea[readonly] {
         <sys_scope display_value="Performance &amp; Development Review">5c227acc13b50bc0995fb6d96144b0f9</sys_scope>
         <sys_update_name>sp_widget_eec3839213b98f806b3330128144b028</sys_update_name>
         <sys_updated_by>jonathanv_adm</sys_updated_by>
-        <sys_updated_on>2017-12-02 18:47:59</sys_updated_on>
+        <sys_updated_on>2017-12-11 16:55:35</sys_updated_on>
         <template><![CDATA[<script type="text/ng-template" id="compModal">
 	<div class="panel panel-default">
 		<div class="panel-heading" style="background-color: Orange; color: white;">
@@ -1421,6 +1421,7 @@ textarea[readonly] {
                       <input type="text" name={{fGoal.formFieldId}}
                              ng-model="fGoal.dueDate" 
                              ng-readonly="!(data.empWrite || data.mgrWrite)"
+                             placeholder="mm/dd/yyyy"
                              > 
                              <!-- ng-pattern="data.dateValidationPattern" > -->
 						<!-- <div ng-hide="futureForm[fGoal.formFieldId].$valid">
@@ -1478,6 +1479,7 @@ textarea[readonly] {
                       <input type="text" name={{item.formFieldId}} 
                              ng-model="item.date"
                              ng-readonly="!(data.empWrite || data.mgrWrite)"
+                            n
                              >  
                              <!-- ng-pattern="data.dateValidationPattern" > -->
 					  <!--<div ng-hide="developmentForm[item.formFieldId].$valid">
