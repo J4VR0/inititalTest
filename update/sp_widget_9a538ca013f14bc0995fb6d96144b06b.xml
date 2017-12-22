@@ -6,11 +6,21 @@
 	// Many of these fields are more configuration-type fields than profile fields. We still want to display
 	// these to a user who is configuring their 'settings', but we shouldn't show them on a user profile page.
 	// We need to handle this better.
+	
+	var c = this;
+	
 	var fieldExcludes = {
 		sys_user: ['name', 'introduction', 'title', 'department', 'location', 'photo',
 							 'manager', 'company'],
 		live_profile: ['short_description', 'photo']
 	}
+	
+	$rootScope.$on('updateRating', function(event,data){
+		console.log('Rating received ' + $rootScope.overallRating);
+		
+		c.data.overallRating = $rootScope.overallRating;
+
+	});
 	
 	$scope.openConnectConversation = function() {
 		$window.open('/$c.do#?user=' + $scope.data.liveProfileID, '_blank');
@@ -213,7 +223,7 @@ if(!input){
         <sys_created_on>2017-10-10 15:35:19</sys_created_on>
         <sys_customer_update>true</sys_customer_update>
         <sys_id>9a538ca013f14bc0995fb6d96144b06b</sys_id>
-        <sys_mod_count>109</sys_mod_count>
+        <sys_mod_count>117</sys_mod_count>
         <sys_name>PDR Profile</sys_name>
         <sys_package display_value="Performance &amp; Development Review" source="x_pdm_pdr">5c227acc13b50bc0995fb6d96144b0f9</sys_package>
         <sys_policy/>
@@ -221,7 +231,7 @@ if(!input){
         <sys_scope display_value="Performance &amp; Development Review">5c227acc13b50bc0995fb6d96144b0f9</sys_scope>
         <sys_update_name>sp_widget_9a538ca013f14bc0995fb6d96144b06b</sys_update_name>
         <sys_updated_by>jonathanv_adm</sys_updated_by>
-        <sys_updated_on>2017-12-11 19:22:26</sys_updated_on>
+        <sys_updated_on>2017-12-19 15:47:34</sys_updated_on>
         <template><![CDATA[<link href="css/bootstrap.min.css" rel="stylesheet" media="print">
 
 <div>

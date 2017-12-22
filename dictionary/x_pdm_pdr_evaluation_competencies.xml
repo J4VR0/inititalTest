@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <database>
-    <element label="Evaluation Competencies" max_length="40" name="x_pdm_pdr_evaluation_competencies" type="collection">
+    <element label="Evaluated Competencies" max_length="40" name="x_pdm_pdr_evaluation_competencies" type="collection">
         <element label="Employee Appraisal" max_length="2000" name="appraisal_emp" type="string"/>
         <element label="Manager Appraisal" max_length="2000" name="appraisal_man" type="string"/>
         <element label="Manager (dotted line) Appraisal" max_length="2000" name="appraisal_man_dot" type="string"/>
