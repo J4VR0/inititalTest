@@ -4,7 +4,7 @@
         <abort_action>false</abort_action>
         <access>package_private</access>
         <action_delete>false</action_delete>
-        <action_insert>false</action_insert>
+        <action_insert>true</action_insert>
         <action_query>false</action_query>
         <action_update>false</action_update>
         <active>true</active>
@@ -30,31 +30,29 @@
         <role_conditions/>
         <script><![CDATA[(function executeRule(current, previous /*null when async*/) {
 	
-checkPrevEval();
+	//Get previous year
+	var master = new PDRMaster();
+	var employee = current.u_employee_name;
+	var prevYear = current.u_parent.u_year -1;
 	
-function checkPrevEval(employee){
-		//Get previous year
-		var master = new PDRMaster();
-		var prevYear = current.u_year -1;
+	//Check if user has performance eval from previous year
+	var prevEval = new GlideRecord('u_performance_evaluation');
+	prevEval.addQuery('u_employee_name', employee);
+	prevEval.addQuery('u_parent.u_year', prevYear.toString());
+	prevEval.query();
+	if(prevEval.next()){
+		var fgArr = prevEval.u_future_sg_1 + ':1';
+		fgArr += ',' + prevEval.u_future_sg_2 + ':2';
+		fgArr += ',' + prevEval.u_future_sg_3 + ':3';
+		fgArr += ',' + prevEval.u_future_sg_4 + ':4';
+		fgArr += ',' + prevEval.u_future_sg_5 + ':5';
 		
-		//Check if user has performance eval from previous year
-		var prevEval = new GlideRecord('u_performance_evaluation');
-		prevEval.addQuery('u_employee_name.sys_id', employee);
-		prevEval.addQuery('u_parent.u_year', prevYear.toString());
-		prevEval.query();
-		if(prevEval.next()){
-			var fgArr = prevEval.u_future_sg_1 + ':1';
-			fgArr += ',' + prevEval.u_future_sg_2 + ':2';
-			fgArr += ',' + prevEval.u_future_sg_3 + ':3';
-			fgArr += ',' + prevEval.u_future_sg_4 + ':4';
-			fgArr += ',' + prevEval.u_future_sg_5 + ':5';
-			
-			master.getPrevEval(employee, fgArr, current.sys_id, '');
-		}else{
-			master.getPrevEval(employee, '', current.sys_id, '');
-		}
-
+		master.getPrevEval(employee, fgArr, current.u_parent, current.sys_id);
+	}else{
+		master.getPrevEval(employee, '', current.u_parent, current.sys_id);
 	}
+	
+	
 	
 })(current, previous);
 ]]></script>
@@ -65,7 +63,7 @@ function checkPrevEval(employee){
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>f91e680413dbc70002df76d66144b067</sys_id>
-        <sys_mod_count>0</sys_mod_count>
+        <sys_mod_count>4</sys_mod_count>
         <sys_name>(PDR) Create Related Goals</sys_name>
         <sys_overrides/>
         <sys_package display_value="Performance &amp; Development Review" source="x_pdm_pdr">5c227acc13b50bc0995fb6d96144b0f9</sys_package>
@@ -74,7 +72,7 @@ function checkPrevEval(employee){
         <sys_scope display_value="Performance &amp; Development Review">5c227acc13b50bc0995fb6d96144b0f9</sys_scope>
         <sys_update_name>sys_script_f91e680413dbc70002df76d66144b067</sys_update_name>
         <sys_updated_by>jonathanv_adm</sys_updated_by>
-        <sys_updated_on>2017-12-22 19:01:50</sys_updated_on>
+        <sys_updated_on>2017-12-22 19:59:54</sys_updated_on>
         <template/>
         <when>async</when>
     </sys_script>
