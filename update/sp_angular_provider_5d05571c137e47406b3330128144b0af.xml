@@ -2,32 +2,34 @@
 <record_update table="sp_angular_provider">
     <sp_angular_provider action="INSERT_OR_UPDATE">
         <name>jvAutosize</name>
-        <script><![CDATA[function(){
+        <script><![CDATA[function ($timeout){
 	return{
 		restrict: 'A',
 		link: function(scope, element, attributes){
 			
-				//console.log('jv-directive => ' + element[0].scrollHeight);
-				//console.log('jv-directive => ' + element[0].scrollTop);
-			    var height = element[0].scrollHeight < 38 ? 38 : element[0].scrollHeight;
-				element.css('overflow', 'auto');
+			//console.log('jv-directive => ' + element[0].scrollHeight);
+			//console.log('jv-directive => ' + element[0].scrollTop);
+			element.css({ 'height': 'auto', 'overflow-y': 'hidden' });
+			$timeout(function(){
+				var height = element[0].scrollHeight < 38 ? 38 : element[0].scrollHeight;
 				element.css('height', height + 'px');
+			}, 100);
 			
-				element.on('input', function(){
-					//console.log('jv-directive => on change' + element[0].scrollHeight);
-					//console.log('jv-directive => ' + element[0].scrollTop);
-					var height = element[0].scrollHeight < 38 ? 38 : element[0].scrollHeight;
-					element.css('height', height + 'px');
-				});
-			}
-		};
-	}]]></script>
+			element.on('input', function(){
+				//console.log('jv-directive => on change' + element[0].scrollHeight);
+				//console.log('jv-directive => ' + element[0].scrollTop);
+				var height = element[0].scrollHeight < 38 ? 38 : element[0].scrollHeight;
+				element.css('height', height + 'px');
+			});
+		}
+	};
+}]]></script>
         <sys_class_name>sp_angular_provider</sys_class_name>
         <sys_created_by>jonathanv_adm</sys_created_by>
         <sys_created_on>2017-11-29 05:21:15</sys_created_on>
         <sys_customer_update>true</sys_customer_update>
         <sys_id>5d05571c137e47406b3330128144b0af</sys_id>
-        <sys_mod_count>26</sys_mod_count>
+        <sys_mod_count>30</sys_mod_count>
         <sys_name>jvAutosize</sys_name>
         <sys_package display_value="Performance &amp; Development Review" source="x_pdm_pdr">5c227acc13b50bc0995fb6d96144b0f9</sys_package>
         <sys_policy/>
@@ -35,7 +37,7 @@
         <sys_scope display_value="Performance &amp; Development Review">5c227acc13b50bc0995fb6d96144b0f9</sys_scope>
         <sys_update_name>sp_angular_provider_5d05571c137e47406b3330128144b0af</sys_update_name>
         <sys_updated_by>jonathanv_adm</sys_updated_by>
-        <sys_updated_on>2017-12-13 15:11:13</sys_updated_on>
+        <sys_updated_on>2017-12-26 17:37:48</sys_updated_on>
         <type>directive</type>
     </sp_angular_provider>
 </record_update>
