@@ -5,9 +5,9 @@
         <sys_class_name>sys_properties_category</sys_class_name>
         <sys_created_by>jonathanv_adm</sys_created_by>
         <sys_created_on>2017-10-12 13:57:05</sys_created_on>
-        <sys_customer_update>false</sys_customer_update>
+        <sys_customer_update>true</sys_customer_update>
         <sys_id>3d1e7d0113b10f806b3330128144b090</sys_id>
-        <sys_mod_count>0</sys_mod_count>
+        <sys_mod_count>1</sys_mod_count>
         <sys_name>PDR Properties</sys_name>
         <sys_package display_value="Performance &amp; Development Review" source="x_pdm_pdr">5c227acc13b50bc0995fb6d96144b0f9</sys_package>
         <sys_policy/>
@@ -15,10 +15,10 @@
         <sys_scope display_value="Performance &amp; Development Review">5c227acc13b50bc0995fb6d96144b0f9</sys_scope>
         <sys_update_name>sys_properties_category_3d1e7d0113b10f806b3330128144b090</sys_update_name>
         <sys_updated_by>jonathanv_adm</sys_updated_by>
-        <sys_updated_on>2017-10-12 13:57:05</sys_updated_on>
+        <sys_updated_on>2017-12-15 18:38:46</sys_updated_on>
         <title><![CDATA[<p><img style="align: baseline;" title="" src="pe_banner.pngx" alt="" height="100" align="baseline" border="" hspace="" vspace="" /></p>
 <p>These properties will help setup current PDR functionalities as well as enable future expandability</p>]]></title>
-        <u_link>https://parkerdrillingtest.service-now.com/system_properties_ui.do?sysparm_title=PDR%20Properties&amp;sysparm_category=PDR%20Properties</u_link>
+        <u_link>https://parkerdrilling.service-now.com/system_properties_ui.do?sysparm_title=PDR%20Properties&amp;sysparm_category=PDR%20Properties</u_link>
     </sys_properties_category>
     <sys_translated_text action="delete_multiple" query="documentkey=3d1e7d0113b10f806b3330128144b090"/>
 </record_update>

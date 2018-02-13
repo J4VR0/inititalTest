@@ -1,16 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <record_update table="sp_widget">
     <sp_widget action="INSERT_OR_UPDATE">
-        <client_script><![CDATA[function ($scope, $element, $window, $location, $rootScope, $timeout, snAttachmentHandler, $http, spUtil) {
+        <client_script><![CDATA[function ($scope, $element, $window, $location, $rootScope, $timeout, snAttachmentHandler, $http, spUtil, $uibModal) {
 	
 	// Many of these fields are more configuration-type fields than profile fields. We still want to display
 	// these to a user who is configuring their 'settings', but we shouldn't show them on a user profile page.
 	// We need to handle this better.
+	
+	var c = this;
+	c.login = false;
+	
 	var fieldExcludes = {
 		sys_user: ['name', 'introduction', 'title', 'department', 'location', 'photo',
 							 'manager', 'company'],
 		live_profile: ['short_description', 'photo']
 	}
+	
+	$rootScope.$on('updateRating', function(event,data){
+		console.log('Rating received ' + $rootScope.overallRating);
+		
+		c.data.overallRating = $rootScope.overallRating;
+
+	});
+	
+	$rootScope.$on('sn.presence', function(event,data){
+		if(data){
+			if(c.login == true)
+				c.closeModal();
+			
+		}else{
+					
+			if(c.login == false){
+				c.openModal();
+			}
+		}
+
+	});
+	
+	c.openModal = function(){
+		c.login = true;
+		c.modalInstance = $uibModal.open({
+			templateUrl: 'loginModal',
+			scope:$scope,
+			backdrop: 'static',
+			windowClass: 'jv-modal-login'
+		});
+	};
+	
+	c.closeModal = function(){
+		c.modalInstance.close();
+		c.login = false;
+	};
+	
+
 	
 	$scope.openConnectConversation = function() {
 		$window.open('/$c.do#?user=' + $scope.data.liveProfileID, '_blank');
@@ -153,8 +195,6 @@ span.label-warning{
 }
 
 
-
-
 </css>
         <data_table>sp_instance</data_table>
         <demo_data/>
@@ -213,7 +253,7 @@ if(!input){
         <sys_created_on>2017-10-10 15:35:19</sys_created_on>
         <sys_customer_update>true</sys_customer_update>
         <sys_id>9a538ca013f14bc0995fb6d96144b06b</sys_id>
-        <sys_mod_count>109</sys_mod_count>
+        <sys_mod_count>178</sys_mod_count>
         <sys_name>PDR Profile</sys_name>
         <sys_package display_value="Performance &amp; Development Review" source="x_pdm_pdr">5c227acc13b50bc0995fb6d96144b0f9</sys_package>
         <sys_policy/>
@@ -221,8 +261,20 @@ if(!input){
         <sys_scope display_value="Performance &amp; Development Review">5c227acc13b50bc0995fb6d96144b0f9</sys_scope>
         <sys_update_name>sp_widget_9a538ca013f14bc0995fb6d96144b06b</sys_update_name>
         <sys_updated_by>jonathanv_adm</sys_updated_by>
-        <sys_updated_on>2017-12-11 19:22:26</sys_updated_on>
-        <template><![CDATA[<link href="css/bootstrap.min.css" rel="stylesheet" media="print">
+        <sys_updated_on>2018-01-05 20:00:53</sys_updated_on>
+        <template><![CDATA[<script type="text/ng-template" id="loginModal">
+	<div class="panel panel-default">
+  	<div class="modal-header">
+          <h4 class="modal-title">Connection Lost</h4>
+    </div>
+    <div class="modal-body">
+      	<iframe width="410" height="300" class="concourse_modal" src="/amb_login.do" frameborder="0" scrolling="no" ng-src="/amb_login.do" align="middle"></iframe>
+  	</div>
+		<div class="modal-footer text-justify">
+			<p>Please do not close or refresh this page. you will lose PDR information typed since the last time you saved. this message will close automatically once you login.</p>
+		</div>
+  </div>
+</script>
 
 <div>
   <div ng-if="data.userExists">

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <client_script><![CDATA[function($rootScope,$scope) {
+	/* widget controller */
+	var c = this;
+	
+	c.selectItem = function(idx) {
+		var id = '';
+		
+		if(idx >= 0)
+			 id = c.data.items[idx].id;
+		
+		//console.log('item ID: ' + id);
+		$rootScope.itemID = id;
+		$rootScope.$emit('selectItem', id);
+	}
+}]]></client_script>
+        <controller_as>c</controller_as>
+        <css/>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>false</has_preview>
+        <id>pdr_menu_list</id>
+        <internal>false</internal>
+        <link/>
+        <name>PDR Menu List</name>
+        <option_schema/>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[(function() {
+  /* populate the 'data' object */
+  /* e.g., data.table = $sp.getValue('table'); */
+	data.items = [];
+	
+	data.items.push({ label:'Dashboard',	id: 'dashboard', show: true });	
+	data.items.push({ label:'My Evaluations',	id: 'my_evals', show: true });
+	data.items.push({ label:'My Team Evaluations', id: 'team_evals', show: true});
+	
+	data.items.push({
+		label:'Evaluations by Region',
+		id: 'region_evals',
+		show: true
+	});
+	
+	data.items.push({
+		label:'Historical Performance',
+		id: 'historic_evals',
+		show: true
+	});
+	
+	data.items.push({
+		label:'Questions?',
+		id: 'knowledge',
+		show: true
+	});
+
+})();]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>jonathanv_adm</sys_created_by>
+        <sys_created_on>2017-12-14 02:45:51</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_id>a092c0dd138343006b3330128144b0a2</sys_id>
+        <sys_mod_count>17</sys_mod_count>
+        <sys_name>PDR Menu List</sys_name>
+        <sys_package display_value="Performance &amp; Development Review" source="x_pdm_pdr">5c227acc13b50bc0995fb6d96144b0f9</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Performance &amp; Development Review">5c227acc13b50bc0995fb6d96144b0f9</sys_scope>
+        <sys_update_name>sp_widget_a092c0dd138343006b3330128144b0a2</sys_update_name>
+        <sys_updated_by>jonathanv_adm</sys_updated_by>
+        <sys_updated_on>2017-12-14 07:17:20</sys_updated_on>
+        <template><![CDATA[<div class="panel panel-default">
+  <ul class="nav nav-pills nav-stacked">
+    <li class="active"><a ng-click="c.selectItem(-1)">PDR Home</a></li>
+    <li ng-repeat="item in data.items">
+      <a ng-click="c.selectItem($index)">{{item.label}}</a>
+    </li>
+  </ul>
+</div>
+
+]]></template>
+    </sp_widget>
+</record_update>

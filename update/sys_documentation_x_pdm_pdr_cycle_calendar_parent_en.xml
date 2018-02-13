@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+    <sys_documentation element="parent" label="Cycle" language="en" table="x_pdm_pdr_cycle_calendar">
+        <sys_documentation action="INSERT_OR_UPDATE">
+            <element>parent</element>
+            <help/>
+            <hint/>
+            <label>Cycle</label>
+            <language>en</language>
+            <name>x_pdm_pdr_cycle_calendar</name>
+            <plural>Cycles</plural>
+            <sys_class_name>sys_documentation</sys_class_name>
+            <sys_created_by>jonathanv_adm</sys_created_by>
+            <sys_created_on>2018-01-03 17:29:05</sys_created_on>
+            <sys_customer_update>false</sys_customer_update>
+            <sys_id>e18c4eb713df030002df76d66144b052</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>Cycle</sys_name>
+            <sys_package display_value="Performance &amp; Development Review" source="x_pdm_pdr">5c227acc13b50bc0995fb6d96144b0f9</sys_package>
+            <sys_policy/>
+            <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+            <sys_scope display_value="Performance &amp; Development Review">5c227acc13b50bc0995fb6d96144b0f9</sys_scope>
+            <sys_update_name>sys_documentation_x_pdm_pdr_cycle_calendar_parent_en</sys_update_name>
+            <sys_updated_by>jonathanv_adm</sys_updated_by>
+            <sys_updated_on>2018-01-03 17:29:05</sys_updated_on>
+            <url/>
+            <url_target/>
+        </sys_documentation>
+    </sys_documentation>
+</record_update>
