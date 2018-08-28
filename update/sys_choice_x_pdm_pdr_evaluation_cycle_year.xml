@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+    <sys_choice action="INSERT_OR_UPDATE" field="year" table="x_pdm_pdr_evaluation_cycle" version="3">
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>year</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>2014</label>
+            <language>en</language>
+            <name>x_pdm_pdr_evaluation_cycle</name>
+            <sequence/>
+            <sys_created_by>jonathanv_adm</sys_created_by>
+            <sys_created_on>2018-08-28 04:35:34</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>e33cf73b134cab40995fb6d96144b013</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>jonathanv_adm</sys_updated_by>
+            <sys_updated_on>2018-08-28 04:35:34</sys_updated_on>
+            <value>2014</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>year</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>2015</label>
+            <language>en</language>
+            <name>x_pdm_pdr_evaluation_cycle</name>
+            <sequence/>
+            <sys_created_by>jonathanv_adm</sys_created_by>
+            <sys_created_on>2018-08-28 04:35:43</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>fb4c7ff7134cab40995fb6d96144b0a2</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>jonathanv_adm</sys_updated_by>
+            <sys_updated_on>2018-08-28 04:35:43</sys_updated_on>
+            <value>2015</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>year</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>2016</label>
+            <language>en</language>
+            <name>x_pdm_pdr_evaluation_cycle</name>
+            <sequence/>
+            <sys_created_by>jonathanv_adm</sys_created_by>
+            <sys_created_on>2018-08-28 04:35:50</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>a55cbff7134cab40995fb6d96144b07b</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>jonathanv_adm</sys_updated_by>
+            <sys_updated_on>2018-08-28 04:35:50</sys_updated_on>
+            <value>2016</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>year</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>2017</label>
+            <language>en</language>
+            <name>x_pdm_pdr_evaluation_cycle</name>
+            <sequence/>
+            <sys_created_by>jonathanv_adm</sys_created_by>
+            <sys_created_on>2018-08-28 04:35:56</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>cf5cf73b134cab40995fb6d96144b01d</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>jonathanv_adm</sys_updated_by>
+            <sys_updated_on>2018-08-28 04:35:56</sys_updated_on>
+            <value>2017</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>year</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>2018</label>
+            <language>en</language>
+            <name>x_pdm_pdr_evaluation_cycle</name>
+            <sequence/>
+            <sys_created_by>jonathanv_adm</sys_created_by>
+            <sys_created_on>2018-08-28 04:36:01</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>146c773b134cab40995fb6d96144b04c</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>jonathanv_adm</sys_updated_by>
+            <sys_updated_on>2018-08-28 04:36:01</sys_updated_on>
+            <value>2018</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>year</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>2019</label>
+            <language>en</language>
+            <name>x_pdm_pdr_evaluation_cycle</name>
+            <sequence/>
+            <sys_created_by>jonathanv_adm</sys_created_by>
+            <sys_created_on>2018-08-28 04:36:08</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>f56cf73b134cab40995fb6d96144b070</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>jonathanv_adm</sys_updated_by>
+            <sys_updated_on>2018-08-28 04:36:08</sys_updated_on>
+            <value>2019</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>year</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>2020</label>
+            <language>en</language>
+            <name>x_pdm_pdr_evaluation_cycle</name>
+            <sequence/>
+            <sys_created_by>jonathanv_adm</sys_created_by>
+            <sys_created_on>2018-08-28 04:36:16</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>376cf73b134cab40995fb6d96144b0c2</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>jonathanv_adm</sys_updated_by>
+            <sys_updated_on>2018-08-28 04:36:16</sys_updated_on>
+            <value>2020</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>year</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>2021</label>
+            <language>en</language>
+            <name>x_pdm_pdr_evaluation_cycle</name>
+            <sequence/>
+            <sys_created_by>jonathanv_adm</sys_created_by>
+            <sys_created_on>2018-08-28 04:36:22</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>5d7c333b134cab40995fb6d96144b058</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>jonathanv_adm</sys_updated_by>
+            <sys_updated_on>2018-08-28 04:36:22</sys_updated_on>
+            <value>2021</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>year</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>2022</label>
+            <language>en</language>
+            <name>x_pdm_pdr_evaluation_cycle</name>
+            <sequence/>
+            <sys_created_by>jonathanv_adm</sys_created_by>
+            <sys_created_on>2018-08-28 04:36:29</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>0f7c3b3b134cab40995fb6d96144b04a</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>jonathanv_adm</sys_updated_by>
+            <sys_updated_on>2018-08-28 04:36:29</sys_updated_on>
+            <value>2022</value>
+        </sys_choice>
+        <sys_choice_set action="INSERT_OR_UPDATE">
+            <element>year</element>
+            <name>x_pdm_pdr_evaluation_cycle</name>
+            <sys_class_name>sys_choice_set</sys_class_name>
+            <sys_created_by>jonathanv_adm</sys_created_by>
+            <sys_created_on>2018-08-28 04:35:34</sys_created_on>
+            <sys_customer_update>false</sys_customer_update>
+            <sys_id>3d4cf73b134cab40995fb6d96144b067</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>year</sys_name>
+            <sys_package display_value="Performance &amp; Development Review" source="x_pdm_pdr">5c227acc13b50bc0995fb6d96144b0f9</sys_package>
+            <sys_policy/>
+            <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+            <sys_scope display_value="Performance &amp; Development Review">5c227acc13b50bc0995fb6d96144b0f9</sys_scope>
+            <sys_update_name>sys_choice_x_pdm_pdr_evaluation_cycle_year</sys_update_name>
+            <sys_updated_by>jonathanv_adm</sys_updated_by>
+            <sys_updated_on>2018-08-28 04:35:34</sys_updated_on>
+        </sys_choice_set>
+    </sys_choice>
+</record_update>

@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <client_script><![CDATA[function($scope, $location) {
+	/* widget controller */
+	var c = this;
+	c.data.loading = true;
+
+	$scope.server.update().then(function(){
+		c.data.loading = false;
+	});
+	
+	$scope.openPDR = function(pdr_id) {
+		$location.search("id=pdr_user_eval&sys_id=" + pdr_id);
+	};
+	
+	$scope.range= function(size){
+		var result = new Array(size);
+		console.log(result.length);
+		
+		return result;
+	};
+
+  c.getLabelType = function(state){
+		
+		var labelType = " state label ";
+		
+		switch(state){
+			case 'Mid Year':
+				 labelType += "label-warning";
+				break;
+				
+			case 'Completed':
+				labelType = "small";
+				break;
+				
+			default: labelType += "label-info";
+		}
+		
+		return labelType;
+		
+	}
+}]]></client_script>
+        <controller_as>c</controller_as>
+        <css>.container{
+  background: white;
+}
+
+.navbar-avatar{
+  margin: 2px 6px;
+}
+
+.pdr-title{
+	color: #ffffff; 
+  text-transform: uppercase; 
+  display:inline-block; 
+  margin: 0;
+  vertical-align: middle;
+}
+
+.container{
+	  margin-bottom: 10px;
+}
+.rating{
+  font-size: 2em;
+  font-style: bold;
+}
+
+.rating-pane{
+  display: inline-block;
+  float: right;
+}
+
+.rating-pane p{
+	margin: 0px;
+  line-height: 1;
+  text-align: center;
+}
+
+.node-body{
+  display: inline-block;
+  width: 80%;
+}
+
+.node-body h4{
+	margin: 4px 0px;
+}
+
+.indent{
+  float: left;
+  padding: 20px;
+}
+
+.node-body p{
+  margin: 5px;
+}
+
+.state{
+	font-size: 0.6em;
+}
+</css>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>false</has_preview>
+        <id>menu-body</id>
+        <internal>false</internal>
+        <link/>
+        <name>Menu Body</name>
+        <option_schema/>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[(function () {
+	/* populate the 'data' object */
+	/* e.g., data.table = $sp.getValue('table'); */
+	if(input){
+		//define the variable to hold our list	
+		data.list = [];
+		data.table = 'u_performance_evaluation';
+		data.pdrYear = 2017;
+		data.isManager = gs.hasRole('x_pdm_pdr.manager');
+		//Query the table
+		var gr = new GlideRecord(data.table);
+		var cUser = gs.getUserID();
+		gr.addEncodedQuery('u_employee_name=' + cUser + '^u_parent.u_yearSTARTSWITH2017');
+		gr.query();
+
+		if(gr.next()){
+			var head = getPDRProfile(gr);
+			head.subordinates = getMyTeam(gr.u_employee_name, 1);
+			head.level = 0;
+			data.treeList = [];
+			buildList(head);
+			//data.dottedLine = getMyDottedTeam();
+			//console.log(data.treeList.toString());
+		}
+	}
+
+	function getPDRProfile(record){
+		var employee = {};
+    
+		employee.sys_id = String(record.u_employee_name.sys_id);
+		employee.name   = record.u_employee_name.getDisplayValue();
+		employee.job    = record.u_employee_name.title.getDisplayValue();
+		employee.state  = record.u_status.getDisplayValue();
+		employee.rating = parseFloat(record.u_overall_rating).toFixed(2);
+		employee.pdr_id = record.getUniqueValue();
+
+		return employee;
+	}
+
+	function getMyTeam(manager, level){
+		var team = [];
+
+		var users = new GlideRecord(data.table);
+		var stringQuery = 'u_manager=' + manager + '^u_parent.u_yearSTARTSWITH2017' + '^u_employee_name.active=true';
+
+		users.addEncodedQuery(stringQuery);
+		users.orderBy('u_employee_name.name');
+		users.query();
+
+		while(users.next()){
+			var member = getPDRProfile(users);
+			member.subordinates = getMyTeam(users.u_employee_name, level + 1);
+			member.level = level;
+			team.push(member);
+		}
+
+		return team;
+
+	}
+	
+	function buildList(employee){
+		data.treeList.push(employee);
+		for(var x in employee.subordinates){
+			buildList(employee.subordinates[x]);
+		}
+			    
+	}
+}
+)();
+
+]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>jonathanv_adm</sys_created_by>
+        <sys_created_on>2017-12-14 02:47:13</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_id>6ce280dd138343006b3330128144b0eb</sys_id>
+        <sys_mod_count>110</sys_mod_count>
+        <sys_name>Menu Body</sys_name>
+        <sys_package display_value="Performance &amp; Development Review" source="x_pdm_pdr">5c227acc13b50bc0995fb6d96144b0f9</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Performance &amp; Development Review">5c227acc13b50bc0995fb6d96144b0f9</sys_scope>
+        <sys_update_name>sp_widget_6ce280dd138343006b3330128144b0eb</sys_update_name>
+        <sys_updated_by>jonathanv_adm</sys_updated_by>
+        <sys_updated_on>2018-06-18 06:20:35</sys_updated_on>
+        <template><![CDATA[<span ng-if="c.data.loading"><i  class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
+  <span class="sr-only">Loading...</span></span>
+<div class="container" ng-if="!c.data.loading" style="background-color: #005596; padding: 0px;">
+  <img class="img-responsive" style="display:inline-block;" src="pdr-logo.png"/>
+  <h1 class="pdr-title"> Performance &amp; Development Review</h1>
+</div>
+<div class="container" >
+  <h2 ng-if="c.data.isManager">My Team Overview	</h2>
+  <h2 ng-if="!c.data.isManager">My PDR Overview	</h2>
+  <div class="treeview" id="managerView">
+    <ul class="list-group">
+      <li class="list-group-item" ng-repeat="employee in c.data.treeList" ng-include="'employee-node'"></li>
+    </ul>
+  </div>
+  <!--<div class="media" ng-repeat="employee in c.data.root" ng-include="'employee-media'"></div>-->
+</div>
+<div class="container">
+  <h2 style="margin-bottom: 30px;">
+    Mid-year Performance Review Process
+  </h2>
+  <img class="img-responsive" style="margin: auto;" src="pdr-midyear.png"/>
+</div>]]></template>
+    </sp_widget>
+</record_update>

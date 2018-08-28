@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+    <sys_ui_related sys_domain="global" table="x_pdm_pdr_evaluation_cycle" version="2" view="">
+        <sys_ui_related_list_entry action="INSERT_OR_UPDATE">
+            <filter/>
+            <list_id display_value="Evaluation Cycle - Default view" name="x_pdm_pdr_evaluation_cycle" related_list="NULL" sys_domain="global" view="Default view">33484ccc135cab40995fb6d96144b07d</list_id>
+            <order_by/>
+            <position>0</position>
+            <related_list>x_pdm_pdr_evaluation.parent</related_list>
+            <sys_class_name>sys_ui_related_list_entry</sys_class_name>
+            <sys_created_by>jonathanv_adm</sys_created_by>
+            <sys_created_on>2018-08-28 05:28:09</sys_created_on>
+            <sys_id>ff484ccc135cab40995fb6d96144b07d</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>jonathanv_adm</sys_updated_by>
+            <sys_updated_on>2018-08-28 05:28:09</sys_updated_on>
+        </sys_ui_related_list_entry>
+        <sys_ui_related_list action="INSERT_OR_UPDATE">
+            <calculated_name>Evaluation Cycle - Default view</calculated_name>
+            <filter/>
+            <name>x_pdm_pdr_evaluation_cycle</name>
+            <order_by/>
+            <position/>
+            <related_list/>
+            <sys_class_name>sys_ui_related_list</sys_class_name>
+            <sys_created_by>jonathanv_adm</sys_created_by>
+            <sys_created_on>2018-08-28 05:28:09</sys_created_on>
+            <sys_customer_update>false</sys_customer_update>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>33484ccc135cab40995fb6d96144b07d</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>Evaluation Cycle - Default view</sys_name>
+            <sys_package display_value="Performance &amp; Development Review" source="x_pdm_pdr">5c227acc13b50bc0995fb6d96144b0f9</sys_package>
+            <sys_policy/>
+            <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+            <sys_scope display_value="Performance &amp; Development Review">5c227acc13b50bc0995fb6d96144b0f9</sys_scope>
+            <sys_update_name>sys_ui_related_x_pdm_pdr_evaluation_cycle_null</sys_update_name>
+            <sys_updated_by>jonathanv_adm</sys_updated_by>
+            <sys_updated_on>2018-08-28 05:28:09</sys_updated_on>
+            <sys_user/>
+            <view display_value="Default view" name="NULL">Default view</view>
+            <view_name/>
+        </sys_ui_related_list>
+    </sys_ui_related>
+</record_update>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update sys_domain="global" table="sysevent_email_action">
+    <sysevent_email_action action="INSERT_OR_UPDATE">
+        <action_insert>false</action_insert>
+        <action_update>false</action_update>
+        <active>true</active>
+        <advanced_condition/>
+        <affected_field_on_event/>
+        <category display_value="Performance Evaluation" name="Performance Evaluation">dcbfe8dc13211300ff80d2228144b06a</category>
+        <collection>u_performance_evaluation</collection>
+        <condition/>
+        <content_type>text/html</content_type>
+        <description/>
+        <event_name>pdr.employee_reminder</event_name>
+        <event_parm_1>false</event_parm_1>
+        <event_parm_2>false</event_parm_2>
+        <exclude_delegates>false</exclude_delegates>
+        <force_delivery>false</force_delivery>
+        <from/>
+        <generation_type>event</generation_type>
+        <importance/>
+        <include_attachments>false</include_attachments>
+        <item>event.parm1</item>
+        <item_table/>
+        <mandatory>false</mandatory>
+        <message/>
+        <message_html><![CDATA[<table style="width: 750px; margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td><img style="align: baseline;" title="" src="pe_banner.pngx" alt="" width="750" align="bottom" border="" hspace="" vspace="" /></td>
+</tr>
+<tr>
+<td>
+<p>&nbsp;</p>
+<p><span style="font-size: 12pt;">Dear ${u_employee_name},</span></p>
+<p>&nbsp;</p>
+<p><span style="font-size: 12pt;">The PDR system will close Friday, <strong>March 16</strong> at 1:00 pm CST.&nbsp; You are receiving this e-mail because your PDR 2017-2018 self-assessment has not yet been completed.&nbsp; Once the forms are closed, the 2017 ratings are closed, the 2018 goals and development plans will be accessible during mid-year.&nbsp;</span></p>
+<p>&nbsp;</p>
+<p><span style="font-size: 12pt;">The PDR cycle consists of 6 steps:</span></p>
+<p><span style="font-size: 12pt;">&nbsp;</span></p>
+<ol>
+<li><span style="font-size: 12.0pt;"> Employee rating, goal setting and development plan draft</span></li>
+<li><span style="font-size: 12.0pt;"> Functional Manager&rsquo;s comments (if applicable)</span></li>
+<li><span style="font-size: 12.0pt;"> Supervisor&rsquo;s rating, review of goals and development plan for 2018</span></li>
+<li><span style="font-size: 12.0pt;"> Manager&rsquo;s review </span></li>
+<li><span style="font-size: 12.0pt;"> Supervisor and Employee PDR meeting</span></li>
+<li><span style="font-size: 12.0pt;"> Employee acknowledgement of meeting with supervisor</span></li>
+</ol>
+<p><span style="font-size: 12.0pt;">&nbsp;</span></p>
+<p><span style="font-size: 12pt;"><strong>Employees</strong> are responsible for drafting goals, developing their development plan for 2018 and ensuring they meet the deadlines (Steps 1 and 6)&nbsp; </span></p>
+<p><span style="font-size: 12pt;"><strong>Supervisors</strong> are responsible for reviewing and providing feedback to the employee, making changes to goals and the development plans, getting input as needed from Functional leader, entering final employee rating, and scheduling and conducting the PDR meeting (Steps 3 and 5).</span></p>
+<p><span style="font-size: 12pt;"><strong>Functional Leaders</strong> are responsible for providing comments to rated goals and providing details or idea&rsquo;s for development plans.&nbsp; </span></p>
+<p><span style="font-size: 12pt;"><strong>Managers</strong> &ndash; Reviewing performance scores and development from a higher level to ensure a consistent approach aligned with organization across their area.</span></p>
+<p style="text-align: justify; text-justify: inter-word;">&nbsp;</p>
+<p style="text-align: justify; text-justify: inter-word; font-size: 12pt;"><em>Click the following ${mail_script:hr_pdr_portal_link} to open your evaluation</em></p>
+<p><span style="font-size: 12pt;">If you have questions, please contact your local HR representative.</span></p>
+<p>&nbsp;</p>
+<p><font size="3" color="#000080" face="helvetica"><strong>Talent Management Team</strong></font><br /> <img style="align: baseline;" title="" src="HR%20Signature.jpgx" alt="" align="bottom" border="0" hspace="-1" vspace="0" /></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
+<p>&nbsp;</p>]]></message_html>
+        <message_list/>
+        <message_text/>
+        <name>Reminder Self-assessment</name>
+        <omit_watermark>true</omit_watermark>
+        <order>100</order>
+        <push_message_only>false</push_message_only>
+        <recipient_fields>u_employee_name</recipient_fields>
+        <recipient_groups/>
+        <recipient_users/>
+        <reply_to/>
+        <send_self>true</send_self>
+        <sms_alternate/>
+        <style/>
+        <subject>Reminder to complete PDR Self-Assessment</subject>
+        <subscribable>false</subscribable>
+        <sys_class_name>sysevent_email_action</sys_class_name>
+        <sys_created_by>jonathanv_adm</sys_created_by>
+        <sys_created_on>2018-01-04 00:12:36</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>b4e56bb71393430002df76d66144b040</sys_id>
+        <sys_mod_count>11</sys_mod_count>
+        <sys_name>Reminder Self-assessment</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Performance &amp; Development Review" source="x_pdm_pdr">5c227acc13b50bc0995fb6d96144b0f9</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Performance &amp; Development Review">5c227acc13b50bc0995fb6d96144b0f9</sys_scope>
+        <sys_update_name>sysevent_email_action_b4e56bb71393430002df76d66144b040</sys_update_name>
+        <sys_updated_by>system</sys_updated_by>
+        <sys_updated_on>2018-04-14 10:06:04</sys_updated_on>
+        <sys_version>2</sys_version>
+        <template/>
+        <type>email</type>
+        <weight>0</weight>
+    </sysevent_email_action>
+</record_update>

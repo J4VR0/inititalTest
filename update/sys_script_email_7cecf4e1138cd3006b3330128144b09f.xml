@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_script_email">
+    <sys_script_email action="INSERT_OR_UPDATE">
+        <name>pending_pdrs</name>
+        <new_lines_to_html>false</new_lines_to_html>
+        <script><![CDATA[(function runMailScript(current, template, email, email_action, event) {
+
+	gs.info('Parm1:' + event.parm1);
+	gs.info('Parm2:' + event.parm2);
+	gs.info('Manager: ' + current.name);
+	
+    var pdrs = new GlideRecord('u_performance_evaluation');
+    pdrs.addQuery('u_manager', current.getUniqueValue());
+	pdrs.addQuery('u_parent', event.parm1.toString());
+	pdrs.addQuery('u_status', event.parm2.toString());
+	pdrs.addQuery('u_employee_name.active', true);
+	pdrs.query();
+	
+	gs.info('Total PDRs: ' + pdrs.getRowCount());
+	
+	template.print("<table style='border-collapse: collapse;'><tr style='border: 1px solid #dddddd; padding: 4px;'><th style='border: 1px solid #dddddd; padding: 4px 8px;'>Emp Number</th><th style='border: 1px solid #dddddd; padding: 4px 8px;'>Name</th><th style='border: 1px solid #dddddd; padding: 4px 8px;'>Job Title</th><th style='border: 1px solid #dddddd; padding: 4px 8px;'>Link</th></tr>");
+	var background = '';
+	
+	for(i = 0; pdrs.next(); i++){
+		
+		if(i%2 == 0) background = "";
+		else background = " background-color: #dddddd;";
+		
+		template.print("<tr style='border: 1px solid #dddddd; padding: 8px; " + background + "'><td style='border: 1px solid #dddddd; padding: 4px 8px;'>" + pdrs.u_employee_name.employee_number + "</td><td style='border: 1px solid #dddddd; padding: 4px 8px;'>" + pdrs.u_employee_name.getDisplayValue() + "</td>");
+		
+		var url = '<a href="' + gs.getProperty('glide.servlet.uri') + 'hrportal?';
+		url += 'id=pdr_user_eval&table=u_performance_evaluation&sys_id=' + pdrs.getUniqueValue() + '">Open PDR</a>';
+		
+		template.print("<td style='border: 1px solid #dddddd; padding: 4px 8px;'>" + pdrs.u_employee_name.title + "</td><td style='border: 1px solid #dddddd; padding: 4px 8px;'>" + url + "</td></tr>");
+		
+	}
+	
+	template.print("</table>");
+
+})(current, template, email, email_action, event);]]></script>
+        <sys_class_name>sys_script_email</sys_class_name>
+        <sys_created_by>jonathanv_adm</sys_created_by>
+        <sys_created_on>2018-02-02 19:18:49</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_id>7cecf4e1138cd3006b3330128144b09f</sys_id>
+        <sys_mod_count>15</sys_mod_count>
+        <sys_name>pending_pdrs</sys_name>
+        <sys_package display_value="Performance &amp; Development Review" source="x_pdm_pdr">5c227acc13b50bc0995fb6d96144b0f9</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Performance &amp; Development Review">5c227acc13b50bc0995fb6d96144b0f9</sys_scope>
+        <sys_update_name>sys_script_email_7cecf4e1138cd3006b3330128144b09f</sys_update_name>
+        <sys_updated_by>jonathanv_adm</sys_updated_by>
+        <sys_updated_on>2018-02-05 20:30:37</sys_updated_on>
+    </sys_script_email>
+</record_update>

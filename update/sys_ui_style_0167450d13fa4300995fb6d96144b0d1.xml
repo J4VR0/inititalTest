@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <record_update table="sys_ui_style">
     <sys_ui_style action="INSERT_OR_UPDATE">
+        <alt/>
         <element>active</element>
         <name>x_pdm_pdr_competencies</name>
         <style>background-color:DarkGrey</style>

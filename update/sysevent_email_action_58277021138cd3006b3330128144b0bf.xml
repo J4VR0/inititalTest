@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update sys_domain="global" table="sysevent_email_action">
+    <sysevent_email_action action="INSERT_OR_UPDATE">
+        <action_insert>false</action_insert>
+        <action_update>false</action_update>
+        <active>true</active>
+        <advanced_condition/>
+        <affected_field_on_event/>
+        <category display_value="User" name="User">d8bfe8dc13211300ff80d2228144b09b</category>
+        <collection>sys_user</collection>
+        <condition/>
+        <content_type>text/html</content_type>
+        <description>Reminder to managers that haven't complete PDR Reviews for their direct reports.</description>
+        <event_name>pdr.mgr_pma_reminder</event_name>
+        <event_parm_1>false</event_parm_1>
+        <event_parm_2>false</event_parm_2>
+        <exclude_delegates>false</exclude_delegates>
+        <force_delivery>false</force_delivery>
+        <from/>
+        <generation_type>event</generation_type>
+        <importance>high</importance>
+        <include_attachments>false</include_attachments>
+        <item>event.parm1</item>
+        <item_table/>
+        <mandatory>false</mandatory>
+        <message/>
+        <message_html><![CDATA[<p><span style="color: #000000; font-family: helvetica; font-size: 12pt;">Dear ${name},</span></p>
+<p>&nbsp;</p>
+<p><span style="font-size: 12.0pt;">The PDR system will close Friday, <strong>March 16</strong> at 1:00 pm CST.&nbsp; You are receiving this e-mail because there are employees that report to you that are awaiting your comments and ratings.&nbsp; On your approval the form will be sent to your manager for final review and approval.&nbsp; Please review the PDR steps below.&nbsp; &nbsp;Once the forms are closed, the 2017 ratings are closed, the 2018 goals and development plans will be accessible during mid-year.&nbsp;</span></p>
+<p>&nbsp;</p>
+<p><span style="font-size: 12.0pt;">${mail_script:pending_pdrs}</span></p>
+<p><span style="font-size: 12.0pt;">&nbsp;</span></p>
+<p><span style="font-size: 12.0pt;">The PDR cycle consists of 6 steps:</span></p>
+<p><span style="font-size: 12.0pt;">&nbsp;</span></p>
+<ol>
+<li><span style="font-size: 12.0pt;"> Employee rating, goal setting and development plan draft</span></li>
+<li><span style="font-size: 12.0pt;"> Functional Manager&rsquo;s comments (if applicable)</span></li>
+<li><span style="font-size: 12.0pt;"> Supervisor&rsquo;s rating, review of goals and development plan for 2018</span></li>
+<li><span style="font-size: 12.0pt;"> Manager&rsquo;s review </span></li>
+<li><span style="font-size: 12.0pt;"> Supervisor and Employee PDR meeting</span></li>
+<li><span style="font-size: 12.0pt;"> Employee acknowledgement of meeting with supervisor</span></li>
+</ol>
+<p><span style="font-size: 12.0pt;">&nbsp;</span></p>
+<p><strong><span style="font-size: 12.0pt;">Employees</span></strong><span style="font-size: 12.0pt;"> are responsible for drafting goals, developing their development plan for 2018 and ensuring they meet the deadlines (Steps 1 and 6)&nbsp; </span></p>
+<p><strong><span style="font-size: 12.0pt;">Supervisors</span></strong><span style="font-size: 12.0pt;"> are responsible for reviewing and providing feedback to the employee, making changes to goals and the development plans, getting input as needed from Functional leader, entering final employee rating, and scheduling and conducting the PDR meeting (Steps 3 and 5).</span></p>
+<p><strong><span style="font-size: 12.0pt;">Functional Leaders</span></strong><span style="font-size: 12.0pt;"> are responsible for providing comments to rated goals and providing details or idea&rsquo;s for development plans.&nbsp; </span></p>
+<p><strong><span style="font-size: 12.0pt;">Managers</span></strong><span style="font-size: 12.0pt;"> &ndash; Reviewing performance scores and development from a higher level to ensure a consistent approach aligned with organization across their area.</span></p>
+<p style="text-align: justify;"><span style="color: #000000; font-family: helvetica; font-size: 12pt;"><em><br /> <span style="font-size: 14pt; color: #003366;"><strong>Talent Management Team</strong></span></em></span></p>]]></message_html>
+        <message_list/>
+        <message_text/>
+        <name>Reminder PDR PMA Overdue</name>
+        <omit_watermark>false</omit_watermark>
+        <order>100</order>
+        <push_message_only>false</push_message_only>
+        <recipient_fields>email</recipient_fields>
+        <recipient_groups/>
+        <recipient_users/>
+        <reply_to/>
+        <send_self>true</send_self>
+        <sms_alternate/>
+        <style/>
+        <subject>Reminder: PDR Evaluations waiting for your input</subject>
+        <subscribable>false</subscribable>
+        <sys_class_name>sysevent_email_action</sys_class_name>
+        <sys_created_by>jonathanv_adm</sys_created_by>
+        <sys_created_on>2018-02-02 18:19:09</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>58277021138cd3006b3330128144b0bf</sys_id>
+        <sys_mod_count>6</sys_mod_count>
+        <sys_name>Reminder PDR PMA Overdue</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Performance &amp; Development Review" source="x_pdm_pdr">5c227acc13b50bc0995fb6d96144b0f9</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Performance &amp; Development Review">5c227acc13b50bc0995fb6d96144b0f9</sys_scope>
+        <sys_update_name>sysevent_email_action_58277021138cd3006b3330128144b0bf</sys_update_name>
+        <sys_updated_by>system</sys_updated_by>
+        <sys_updated_on>2018-04-14 10:06:02</sys_updated_on>
+        <sys_version>2</sys_version>
+        <template/>
+        <type>email</type>
+        <weight>0</weight>
+    </sysevent_email_action>
+</record_update>

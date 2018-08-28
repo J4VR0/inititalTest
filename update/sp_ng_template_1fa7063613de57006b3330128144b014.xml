@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sp_ng_template">
+    <sp_ng_template action="INSERT_OR_UPDATE">
+        <id>employee-media</id>
+        <sp_widget display_value="Menu Body">6ce280dd138343006b3330128144b0eb</sp_widget>
+        <sys_class_name>sp_ng_template</sys_class_name>
+        <sys_created_by>jonathanv_adm</sys_created_by>
+        <sys_created_on>2018-05-29 18:08:52</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>1fa7063613de57006b3330128144b014</sys_id>
+        <sys_mod_count>11</sys_mod_count>
+        <sys_name>employee-media</sys_name>
+        <sys_package display_value="Performance &amp; Development Review" source="x_pdm_pdr">5c227acc13b50bc0995fb6d96144b0f9</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Performance &amp; Development Review">5c227acc13b50bc0995fb6d96144b0f9</sys_scope>
+        <sys_update_name>sp_ng_template_1fa7063613de57006b3330128144b014</sys_update_name>
+        <sys_updated_by>jonathanv_adm</sys_updated_by>
+        <sys_updated_on>2018-05-30 19:07:26</sys_updated_on>
+        <template><![CDATA[<div class="media-left" ng-click="openPDR(employee.pdr_id)">
+  <span class="navbar-avatar">
+    <sn-avatar class="avatar-medium" primary="employee.sys_id" show-presence="true" />
+  </span>
+</div>
+<div class="media-body">
+  <h4 class="media-heading" ng-click="openPDR(employee.pdr_id)"> {{employee.name}} <small><i>{{employee.state}}</i></small></h4>
+  <p>{{employee.job}}</p>
+  <div class="media" ng-repeat="employee in employee.subordinates" ng-include="'employee-media'"></div>
+</div>]]></template>
+    </sp_ng_template>
+</record_update>

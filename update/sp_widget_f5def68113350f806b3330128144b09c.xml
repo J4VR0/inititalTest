@@ -76,7 +76,7 @@
 	var cUser = gs.getUserID(); // Current logged in user
 	var stringQuery = 'u_employee_name=' + cUser + '^u_statusIN2,7,9'; // My Active PDRs
 	stringQuery += '^NQu_functional_manager=' + cUser + '^u_status=3'; //+ Functional Reports waiting for me
-	stringQuery += '^NQu_manager=' + cUser + '^u_statusIN4,6'; //+ Direct Reports waiting for me
+	stringQuery += '^NQu_manager=' + cUser + '^u_statusIN4,6,9'; //+ Direct Reports waiting for me
 	stringQuery += '^NQu_second_level_manager=' + cUser + '^u_status=5'; //+ Second Level Reports waiting for me
 	gr.addEncodedQuery(stringQuery);
 	gr.addQuery('u_employee_name.active = true');
@@ -127,7 +127,7 @@
 		var cl = new GlideRecord('sys_choice');
 		cl.addQuery('name' , 'u_performance_evaluation');
 		cl.addQuery('element', 'u_status');
-		cl.addQuery('value','NOT IN', '1,9');
+		cl.addQuery('value','NOT IN', '1');
 		cl.query();
 		
 		var cl2 = [];
@@ -159,9 +159,9 @@
         <sys_class_name>sp_widget</sys_class_name>
         <sys_created_by>jonathanv_adm</sys_created_by>
         <sys_created_on>2017-10-12 18:31:26</sys_created_on>
-        <sys_customer_update>true</sys_customer_update>
+        <sys_customer_update>false</sys_customer_update>
         <sys_id>f5def68113350f806b3330128144b09c</sys_id>
-        <sys_mod_count>42</sys_mod_count>
+        <sys_mod_count>60</sys_mod_count>
         <sys_name>My Active PDRS</sys_name>
         <sys_package display_value="Performance &amp; Development Review" source="x_pdm_pdr">5c227acc13b50bc0995fb6d96144b0f9</sys_package>
         <sys_policy/>
@@ -169,7 +169,7 @@
         <sys_scope display_value="Performance &amp; Development Review">5c227acc13b50bc0995fb6d96144b0f9</sys_scope>
         <sys_update_name>sp_widget_f5def68113350f806b3330128144b09c</sys_update_name>
         <sys_updated_by>jonathanv_adm</sys_updated_by>
-        <sys_updated_on>2017-12-02 17:27:03</sys_updated_on>
+        <sys_updated_on>2018-06-05 15:07:36</sys_updated_on>
         <template><![CDATA[<div class="panel panel-{{c.options.color}} b" ng-if="always_show || data.list.length">
   <div class="panel-heading">
     <h4 class="panel-title">{{c.options.title}}</h4>
@@ -197,11 +197,14 @@
         <div class="flex-item" ng-click="toggle($event, item)"><img src="images/filter_hide16.gifx" /></div>
         <div class="flex-item">
           <span ng-repeat="stage in item.cl">
-            <span ng-if="stage.value < item.stage">
+            <span ng-if="stage.value < item.stage && item.stage != 9">
               <img src="/images/sp-icon-check-circle.png" data-toggle="tooltip" data-placement="top" ng-attr-title="{{stage.label}}" />
             </span>
-            <span ng-if="stage.value >= item.stage">
+            <span ng-if="stage.value >= item.stage && item.stage != 9">
               <img src="/images/sp-icon-empty-circle.png" data-toggle="tooltip" data-placement="top" ng-attr-title="{{stage.label}}" />
+            </span>
+            <span ng-if="stage.value == item.stage">
+              <span class="glyphicon glyphicon-exclamation-sign" style="font-size:18px;color:orange;" data-toggle="tooltip" data-placement="top" ng-attr-title="{{stage.label}}"></span>
             </span>
           </span> 
         </div> 
@@ -210,15 +213,20 @@
       <div ng-if="item.cl.length > 0" ng-show="item.expand" class="requested-items-flex-container">
         <div class="flex-item" ng-click="toggle($event, item)"><img src="images/filter_reveal16.gifx" /></div>
         <div class="flex-item">
-          <div ng-repeat="stage in item.cl">
-            <div ng-if="stage.value < item.stage" class="stage-on">
+          <div ng-repeat="stage in item.cl"> 
+            <div ng-if="stage.value < item.stage && item.stage != 9" class="stage-on">
               <img src="/images/sp-icon-check-circle.png" />
               {{stage.label}}
             </div>
-            <div ng-if="stage.value >= item.stage" class="stage-off text-muted">
+            <div ng-if="stage.value >= item.stage && item.stage != 9" class="stage-off text-muted">
               <img src="/images/sp-icon-empty-circle.png" />
               {{stage.label}}
             </div>
+            <div ng-if="stage.value == item.stage" class="stage-on">
+              <span class="glyphicon glyphicon-exclamation-sign" style="font-size:14px;color:orange;"></span>
+              {{stage.label}}
+            </div>
+            
           </div>
         </div> 
       </div>

@@ -11,9 +11,9 @@
 PDRMaster.prototype = {
 	initialize: function() {
 	},
-	
+
 	getPrevEval : function(employee, fGoals, evalYr, evalGr) {
-		
+
 		//If previous year evaluation is provided, loop through all the previous years SMART goals into an array
 		var gArray = [];
 		var lineBreak1 = '\n -------------------------------- \n';
@@ -22,7 +22,7 @@ PDRMaster.prototype = {
 			var arr = fGoals.split(',');
 			var str = '';
 			var tmpGl, tmpMs,tmpEt, tmpDd, tmpCm, tmpWt;
-			
+
 			for (var i=0; i < arr.length; i++) {
 				var nbr = arr[i].split(':');
 				var fg = new GlideRecord('u_pe_future_goal_' + nbr[1]);
@@ -43,15 +43,42 @@ PDRMaster.prototype = {
 			this.createEval(employee, evalYr, '');
 		}
 	},
-	
+
 	validate: function(value){
 		if(!value)
 			return '';
 		else return value;
 	},
-	
-	createEval : function(employee, evalYr, sGoal){
+
+	createEvaluation : function(employee, cycle){
+		var newEval = new GlideRecord('x_pdm_pdr_evaluation');
+		var grUser = new GlideRecord('sys_user');
+		var hrprof = new GlideRecord('sn_hr_core_profile');
 		
+		grUser.get(employee);
+		hrprof.addQuery('user', employee);
+		hrprof.query();
+		
+		newEval.initialize();
+		newEval.parent = cycle;
+		newEval.organization = grUser.department;
+		newEval.manager = grUser.manager;
+		
+		//Include Functional Manager if available
+		if(hrprof.next())
+			newEval.functional_manager = hrprof.u_functional_manager;
+		
+		newEval.manager_plus1 = grUser.manager.manager;
+		newEval.employee = grUser.getUniqueValue();
+		newEval.setValue('status','1');
+		
+		newEval.insert();
+
+
+	},
+
+	createEval : function(employee, evalYr, sGoal){
+
 		var newEval = new GlideRecord('u_performance_evaluation');
 		newEval.addQuery('u_employee_name', employee);
 		newEval.addQuery('u_parent', evalYr);
@@ -63,8 +90,8 @@ PDRMaster.prototype = {
 			var usrDept = gUsr.department.sys_id;
 			var usrMgr = gUsr.manager.sys_id;
 			var usrBU = gUsr.u_bus_unit.u_value;
-			
-			
+
+
 			//Create new performance evaluation
 			newEval.initialize();
 			newEval.u_parent = evalYr;
@@ -76,22 +103,22 @@ PDRMaster.prototype = {
 			newEval.u_employee_is_active = 'Yes';
 			newEval.u_regional_hr_admin_group = usrBU;
 			var evalSysid = newEval.insert();
-			
+
 			this.createGoals(evalSysid, sGoal);
 		}else{
 			this.createGoals(newEval.sys_id, sGoal);
 		}
-		
+
 	},
-	
+
 	createGoals : function(evalGr, smGoals){
 		var pe = new GlideRecord('u_performance_evaluation');
 		pe.addQuery('sys_id', evalGr);
 		pe.query();
 		if(pe.next()){
-			
+
 			if(smGoals != ''){
-				
+
 				// This function creates the relating 5 Smart Goals on the Performance Evaluation tab
 				for (var i=0; i < smGoals.length; i++) {
 					var tbl = i + 1;
@@ -101,7 +128,7 @@ PDRMaster.prototype = {
 					if(!smg.next()){
 						smg.initialize();
 						smg.u_parent  = evalGr;
-						
+
 						if(i==0){
 							var str = smGoals[i].split("@");
 							var gStr1 = str[0];
@@ -145,7 +172,7 @@ PDRMaster.prototype = {
 							}
 							var smgid = smg.insert();
 							pe.u_smart_goal_4 = smgid;
-							
+
 						}else if(i==4){
 							var str = smGoals[i].split("@");
 							var gStr5 = str[0];
@@ -167,26 +194,26 @@ PDRMaster.prototype = {
 					smg.initialize();
 					smg.u_parent  = evalGr;
 					var smgid = smg.insert();
-					
+
 					switch(x){
 						case 1: pe.u_smart_goal_1 = smgid;
-						break;
+							break;
 						case 2: pe.u_smart_goal_2 = smgid;
-						break;
+							break;
 						case 3: pe.u_smart_goal_3 = smgid;
-						break;
+							break;
 						case 4: pe.u_smart_goal_4 = smgid;
-						break;
+							break;
 						case 5: pe.u_smart_goal_5 = smgid;
-						break;
+							break;
 					}
 				}
-				
+
 			}
-			
+
 			pe.update();
 		}
-		
+
 		/* PDR v1.0 - Overwritten
 		// This function creates the relating 5 Competencies on the Performance Evaluation tab
 		var arry = ['u_pe_comp_customer_focus','u_pe_comp_team_work','u_pe_comp_driving_change','u_pe_comp_business_acumen','u_pe_comp_results_focused'];
@@ -212,7 +239,7 @@ PDRMaster.prototype = {
 				pe.u_comp_results_focus = cmpid;
 		}*/
 		this._includeCompetencies(pe);
-		
+
 		pe.update();
 		// This function creates the relating 5 Future Goals on the Set Smart Goals tab
 		var tbl = 6;
@@ -237,7 +264,7 @@ PDRMaster.prototype = {
 				pe.u_future_sg_5 = fgid;
 		}
 		pe.update();
-		
+
 		// This function creates the relatinig Development plan record on the Development plan tab
 		var tbl = 7;
 		for (i = 1; i < tbl; i++) {
@@ -248,7 +275,7 @@ PDRMaster.prototype = {
 				dev.initialize();
 				dev.u_parent  = evalGr;
 				var devid = dev.insert();
-				
+
 				if(i == 1)
 					pe.u_dev_plan_1 = devid;
 				if(i == 2)
@@ -262,9 +289,9 @@ PDRMaster.prototype = {
 				if(i == 6)
 					pe.u_dev_plan_6 = devid;
 			}
-			
+
 		}
-		
+
 		// This function creates the relatinig Comment record on the Comments tab
 		var com = new GlideRecord('u_pe_comments');
 		com.addQuery('u_parent', evalGr);
@@ -275,51 +302,51 @@ PDRMaster.prototype = {
 			var comid = com.insert();
 			pe.u_pe_comment = comid;
 		}
-		
+
 		pe.update();
-		
+
 	},
-	
+
 	_includeCompetencies: function(pe){
-		
+
 		var hrprof = new GlideRecord('sn_hr_core_profile');
 		hrprof.addQuery('user', pe.u_employee_name);
 		hrprof.query();
-		
+
 		if(hrprof.next()){
 			var mgmLvl = hrprof.position.u_management_level.u_value;
 			var stringQuery = 'management_level=NULL^NQdefault=true';
-			
+
 			if(mgmLvl)
 				stringQuery = 'management_level.u_value>=' + mgmLvl;
-			
+
 			var compCount = new GlideAggregate('x_pdm_pdr_competencies');
 			compCount.addEncodedQuery(stringQuery);
 			compCount.addAggregate('COUNT');
 			compCount.query();
-			
+
 			if(compCount.next()){
 				var count = compCount.getAggregate('COUNT');
-				
+
 				var evalComp = new GlideRecord('x_pdm_pdr_competencies');
 				evalComp.addEncodedQuery(stringQuery);
 				evalComp.orderBy('name');
 				evalComp.query();
-				
+
 				for(i=1;evalComp.next(); i++){
-					
+
 					var weight = (100 / count).toFixed(2);
 					if(i == count)
 						weight = (100 - ( weight * (count -1))).toFixed(2);
-					
+
 					var pdrComp = new GlideRecord('x_pdm_pdr_evaluation_competencies');
-					
+
 					pdrComp.initialize();
-					
+
 					pdrComp.parent = pe.getUniqueValue();
 					pdrComp.competency = evalComp.getUniqueValue();
 					pdrComp.weight = weight;
-					
+
 					pdrComp.insert();
 				}
 			}else{
@@ -328,9 +355,9 @@ PDRMaster.prototype = {
 		}else {
 			gs.logError('No HR Profile found for: ' + pe.u_employee_name.getDisplayValue(),'PDRMaster');
 		}
-		
+
 	},
-	
+
 	deleteRelatedEval : function(parent, parentName){
 		var cnt = 0;
 		var ev = new GlideRecord('u_performance_evaluation');
@@ -349,7 +376,7 @@ PDRMaster.prototype = {
         <sys_created_on>2017-10-09 18:33:26</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>3c22e3c413390bc0995fb6d96144b0b1</sys_id>
-        <sys_mod_count>12</sys_mod_count>
+        <sys_mod_count>13</sys_mod_count>
         <sys_name>PDRMaster</sys_name>
         <sys_package display_value="Performance &amp; Development Review" source="x_pdm_pdr">5c227acc13b50bc0995fb6d96144b0f9</sys_package>
         <sys_policy>read</sys_policy>
@@ -357,6 +384,6 @@ PDRMaster.prototype = {
         <sys_scope display_value="Performance &amp; Development Review">5c227acc13b50bc0995fb6d96144b0f9</sys_scope>
         <sys_update_name>sys_script_include_3c22e3c413390bc0995fb6d96144b0b1</sys_update_name>
         <sys_updated_by>jonathanv_adm</sys_updated_by>
-        <sys_updated_on>2017-10-12 15:45:51</sys_updated_on>
+        <sys_updated_on>2018-08-28 05:25:04</sys_updated_on>
     </sys_script_include>
 </record_update>

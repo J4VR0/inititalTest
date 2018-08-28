@@ -22,17 +22,17 @@
         <override_menu_roles>false</override_menu_roles>
         <query>u_performance_evaluation_list.do?sysparm_query=u_employee_name.active=true^u_statusNOT IN8^u_parent.u_yearSTARTSWITH2017</query>
         <report/>
-        <roles>x_pdm_pdr.admin</roles>
+        <roles/>
         <survey/>
         <survey_overwrite>true</survey_overwrite>
         <sys_class_name>sys_app_module</sys_class_name>
         <sys_created_by>jonathanv_adm</sys_created_by>
         <sys_created_on>2017-10-10 15:03:52</sys_created_on>
-        <sys_customer_update>false</sys_customer_update>
+        <sys_customer_update>true</sys_customer_update>
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>a87bff1c13b14bc0995fb6d96144b04a</sys_id>
-        <sys_mod_count>11</sys_mod_count>
+        <sys_mod_count>12</sys_mod_count>
         <sys_name>Open</sys_name>
         <sys_overrides/>
         <sys_package display_value="Performance &amp; Development Review" source="x_pdm_pdr">5c227acc13b50bc0995fb6d96144b0f9</sys_package>
@@ -41,7 +41,7 @@
         <sys_scope display_value="Performance &amp; Development Review">5c227acc13b50bc0995fb6d96144b0f9</sys_scope>
         <sys_update_name>sys_app_module_a87bff1c13b14bc0995fb6d96144b04a</sys_update_name>
         <sys_updated_by>jonathanv_adm</sys_updated_by>
-        <sys_updated_on>2017-10-12 14:44:06</sys_updated_on>
+        <sys_updated_on>2017-12-18 15:13:25</sys_updated_on>
         <timeline_page/>
         <title>Open</title>
         <uncancelable>false</uncancelable>

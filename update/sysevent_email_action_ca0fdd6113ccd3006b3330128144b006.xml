@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update sys_domain="global" table="sysevent_email_action">
+    <sysevent_email_action action="INSERT_OR_UPDATE">
+        <action_insert>false</action_insert>
+        <action_update>false</action_update>
+        <active>true</active>
+        <advanced_condition/>
+        <affected_field_on_event/>
+        <category display_value="User" name="User">d8bfe8dc13211300ff80d2228144b09b</category>
+        <collection>sys_user</collection>
+        <condition/>
+        <content_type>text/html</content_type>
+        <description>Reminder to managers that haven't complete PDR Conversation with their direct reports.</description>
+        <event_name>pdr.mgr_awd_reminder</event_name>
+        <event_parm_1>false</event_parm_1>
+        <event_parm_2>false</event_parm_2>
+        <exclude_delegates>false</exclude_delegates>
+        <force_delivery>false</force_delivery>
+        <from/>
+        <generation_type>event</generation_type>
+        <importance>high</importance>
+        <include_attachments>false</include_attachments>
+        <item>event.parm1</item>
+        <item_table/>
+        <mandatory>false</mandatory>
+        <message/>
+        <message_html><![CDATA[<p><span style="color: #000000; font-family: helvetica; font-size: 12pt;">Dear ${name},</span></p>
+<p>&nbsp;</p>
+<p><span style="font-family: helvetica; font-size: 12pt;">As a manager, you are accountable for the performance of your team, which includes providing feedback, recognizing and reinforcing strong performance in your employees, identify and encourage improvement where needed. Over 99% of Parker employees have completed their self-assessment and are eager to hear from you.&nbsp; Please, plan to meet with your employees as soon as possible, to review their final ratings, goals and development for 2018.&nbsp; After the meeting &ldquo;Acknowledge&rdquo; the discussion has taken place in PDR, this will send the form back to the employee where final comments can be added to the form.&nbsp; Please, remind your employees to complete PDR by clicking the &ldquo;Acknowledge&rdquo; button. As soon they do this the status of PDR will change to &ldquo;Complete&rdquo;.</span></p>
+<p>&nbsp;</p>
+<p><span style="color: #000000; font-family: helvetica; font-size: 12pt; text-align: justify;"><code class="ph codeph">${mail_script:pending_pdrs}</code> </span></p>
+<p style="text-align: justify;"><span style="color: #000000; font-family: helvetica; font-size: 12pt;"><br /> If you have questions, please, contact your local HR representative.</span></p>
+<p style="text-align: justify;"><span style="color: #000000; font-family: helvetica; font-size: 12pt;"><em><br /> <span style="font-size: 14pt; color: #003366;"><strong>Talent Management Team</strong></span></em></span></p>]]></message_html>
+        <message_list/>
+        <message_text/>
+        <name>Reminder PDR AWD Overdue</name>
+        <omit_watermark>false</omit_watermark>
+        <order>100</order>
+        <push_message_only>false</push_message_only>
+        <recipient_fields>email</recipient_fields>
+        <recipient_groups/>
+        <recipient_users/>
+        <reply_to/>
+        <send_self>true</send_self>
+        <sms_alternate/>
+        <style/>
+        <subject>Reminder: PDR Evaluations Waiting for Discussion with your direct reports</subject>
+        <subscribable>false</subscribable>
+        <sys_class_name>sysevent_email_action</sys_class_name>
+        <sys_created_by>jonathanv_adm</sys_created_by>
+        <sys_created_on>2018-02-02 21:11:05</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>ca0fdd6113ccd3006b3330128144b006</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>Reminder PDR AWD Overdue</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Performance &amp; Development Review" source="x_pdm_pdr">5c227acc13b50bc0995fb6d96144b0f9</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Performance &amp; Development Review">5c227acc13b50bc0995fb6d96144b0f9</sys_scope>
+        <sys_update_name>sysevent_email_action_ca0fdd6113ccd3006b3330128144b006</sys_update_name>
+        <sys_updated_by>system</sys_updated_by>
+        <sys_updated_on>2018-04-14 10:06:04</sys_updated_on>
+        <sys_version>2</sys_version>
+        <template/>
+        <type>email</type>
+        <weight>0</weight>
+    </sysevent_email_action>
+</record_update>

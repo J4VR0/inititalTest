@@ -2,20 +2,26 @@
 <record_update table="sp_angular_provider">
     <sp_angular_provider action="INSERT_OR_UPDATE">
         <name>jvAutosize</name>
-        <script><![CDATA[function(){
+        <script><![CDATA[function ($timeout){
 	return{
 		restrict: 'A',
 		link: function(scope, element, attributes){
 			
-				//console.log('jv-directive => ' + element[0].scrollHeight);
-				//console.log('jv-directive => ' + element[0].scrollTop);
-				element.css('overflow', 'auto');
-				element.css('height',element[0].scrollHeight + 'px');
-			
+			//console.log('jv-directive => ' + element[0].scrollHeight);
+			//console.log('jv-directive => ' + element[0].scrollTop);
+			element.css({ 'height': 'auto'});
+				$timeout(function(){
+					
+					var height = element[0].scrollHeight < 38 ? 38 : element[0].scrollHeight + 2;
+					//console.log('jv-directive:timeout => ' + element[0].value + ' Height: ' + height);
+					element.css('height', height + 'px');
+				}, 100);
+				
 				element.on('input', function(){
 					//console.log('jv-directive => on change' + element[0].scrollHeight);
 					//console.log('jv-directive => ' + element[0].scrollTop);
-					element.css('height',(element[0].scrollHeight) + 'px');
+					var height = element[0].scrollHeight < 38 ? 38 : element[0].scrollHeight;
+					element.css('height', height + 'px');
 				});
 			}
 		};
@@ -25,7 +31,7 @@
         <sys_created_on>2017-11-29 05:21:15</sys_created_on>
         <sys_customer_update>true</sys_customer_update>
         <sys_id>5d05571c137e47406b3330128144b0af</sys_id>
-        <sys_mod_count>24</sys_mod_count>
+        <sys_mod_count>44</sys_mod_count>
         <sys_name>jvAutosize</sys_name>
         <sys_package display_value="Performance &amp; Development Review" source="x_pdm_pdr">5c227acc13b50bc0995fb6d96144b0f9</sys_package>
         <sys_policy/>
@@ -33,7 +39,7 @@
         <sys_scope display_value="Performance &amp; Development Review">5c227acc13b50bc0995fb6d96144b0f9</sys_scope>
         <sys_update_name>sp_angular_provider_5d05571c137e47406b3330128144b0af</sys_update_name>
         <sys_updated_by>jonathanv_adm</sys_updated_by>
-        <sys_updated_on>2017-12-02 17:02:09</sys_updated_on>
+        <sys_updated_on>2018-01-12 06:21:28</sys_updated_on>
         <type>directive</type>
     </sp_angular_provider>
 </record_update>

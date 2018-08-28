@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database>
+    <element label="Calendar" max_length="40" name="x_pdm_pdr_cycle_calendar" type="collection">
+        <element label="Due Date" max_length="40" name="due_date" type="glide_date"/>
+        <element label="Cycle" mandatory="true" max_length="32" name="parent" reference="u_performance_evaluation_parent" type="reference"/>
+        <element label="Reminder Event" max_length="32" name="reminder_event" reference="sysevent_register" reference_qual="event_nameSTARTSWITHpdr.^EQ" reference_qual_condition="event_nameSTARTSWITHpdr.^EQ" type="reference"/>
+        <element label="Status" max_length="32" name="state" reference="sys_choice" reference_qual="name=u_performance_evaluation^element=u_status^inactive=false^EQ" reference_qual_condition="name=u_performance_evaluation^element=u_status^inactive=false^EQ" type="reference"/>
+        <index name="index">
+            <element name="parent"/>
+        </index>
+        <index name="index2">
+            <element name="reminder_event"/>
+        </index>
+        <index name="index3">
+            <element name="state"/>
+        </index>
+    </element>
+</database>

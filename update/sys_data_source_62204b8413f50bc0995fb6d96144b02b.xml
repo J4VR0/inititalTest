@@ -20,6 +20,7 @@
         <jdbc_password>rRtJGfKfzrI=</jdbc_password>
         <jdbc_server>db3057.coresys.com</jdbc_server>
         <jdbc_user_name>APPSRO</jdbc_user_name>
+        <jpath_root_node/>
         <last_run_database_field/>
         <last_run_datetime/>
         <ldap_target/>
@@ -42,7 +43,7 @@
         <sys_class_name>sys_data_source</sys_class_name>
         <sys_created_by>jonathanv_adm</sys_created_by>
         <sys_created_on>2017-10-09 16:06:44</sys_created_on>
-        <sys_customer_update>true</sys_customer_update>
+        <sys_customer_update>false</sys_customer_update>
         <sys_id>62204b8413f50bc0995fb6d96144b02b</sys_id>
         <sys_mod_count>4</sys_mod_count>
         <sys_name>JDBC Oracle PDR Competencies v2</sys_name>

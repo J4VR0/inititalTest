@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database>
+    <element audit="true" label="Evaluation Cycle" max_length="40" name="x_pdm_pdr_evaluation_cycle" type="collection">
+        <element calculation="(function calculatedFieldValue(current) {&#13;&#10;&#13;&#10;&#9;// Add your code here&#13;&#10;&#9;return current.year + ' Performance &amp; Development Review';  // return the calculated value&#13;&#10;&#13;&#10;})(current);" display="true" label="Name" max_length="60" name="name" read_only="true" type="string" virtual="true"/>
+        <element label="Participant Groups" max_length="4000" name="participant_groups" reference="sys_user_group" type="glide_list"/>
+        <element label="Work Notes" max_length="4000" name="work_notes" type="journal"/>
+        <element choice="3" default="javascript:new GlideDate().getYearNoTZ();" label="Year" max_length="4" name="year" type="integer">
+            <choice>
+                <element label="2014" value="2014"/>
+                <element label="2015" value="2015"/>
+                <element label="2016" value="2016"/>
+                <element label="2017" value="2017"/>
+                <element label="2018" value="2018"/>
+                <element label="2019" value="2019"/>
+                <element label="2020" value="2020"/>
+                <element label="2021" value="2021"/>
+                <element label="2022" value="2022"/>
+            </choice>
+        </element>
+    </element>
+</database>

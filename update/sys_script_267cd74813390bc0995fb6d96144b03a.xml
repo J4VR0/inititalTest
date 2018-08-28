@@ -12,14 +12,14 @@
         <advanced>true</advanced>
         <change_fields>false</change_fields>
         <client_callable>false</client_callable>
-        <collection>u_performance_evaluation_parent</collection>
-        <condition>!current.u_participant_groups.nil();</condition>
+        <collection>x_pdm_pdr_evaluation_cycle</collection>
+        <condition>!current.participant_groups.nil();</condition>
         <description/>
         <execute_function>false</execute_function>
         <filter_condition/>
         <is_rest>false</is_rest>
         <message/>
-        <name>Create related PDRs</name>
+        <name>(PDR) Create related PDRs</name>
         <order>100</order>
         <priority>50</priority>
         <rest_method/>
@@ -31,51 +31,46 @@
         <script><![CDATA[(function executeRule(current, previous /*null when async*/) {
 
 	//Get all members of eval participant groups
-	var str = 'The following employees of participant groups are inactive. No performance evaluation was created for them.' + '\n';
-	var cnt = 0;
-	var grpSys = current.u_participant_groups.split(",");
+	var workNotes = '';
+	var grpSys = current.participant_groups.split(",");
+
 	for(var i=0; i < grpSys.length; i++){
 		var grp = new GlideRecord('sys_user_grmember');
 		grp.addQuery('group', grpSys[i]);
 		grp.query();
 		while(grp.next()){
-			//If user is acitve, proceed with checking previouse year eval
-			if(grp.user.active){
-				checkPrevEval(grp.user);
-			}else{
-                str += grp.user.name + '\n';
-				cnt++;
-            }
+
+			var message = checkEvaluation(grp.user, current.year);
+
+			if(message != '')
+				workNotes += message + '\n';
+
 		}
 	}
 
-    if(cnt > 0)
-    current.u_work_notes = str;
-    current.update();
-
+	if(workNotes != '')
+		current.work_notes = workNotes;
 	
-	function checkPrevEval(employee){
-		//Get previous year
-		var master = new PDRMaster();
-		var prevYear = current.u_year -1;
-		
-		//Check if user has performance eval from previous year
-		var prevEval = new GlideRecord('u_performance_evaluation');
-		prevEval.addQuery('u_employee_name.sys_id', employee);
-		prevEval.addQuery('u_parent.u_year', prevYear.toString());
-		prevEval.query();
-		if(prevEval.next()){
-			var fgArr = prevEval.u_future_sg_1 + ':1';
-			fgArr += ',' + prevEval.u_future_sg_2 + ':2';
-			fgArr += ',' + prevEval.u_future_sg_3 + ':3';
-			fgArr += ',' + prevEval.u_future_sg_4 + ':4';
-			fgArr += ',' + prevEval.u_future_sg_5 + ':5';
-			
-			master.getPrevEval(employee, fgArr, current.sys_id, '');
-		}else{
-			master.getPrevEval(employee, '', current.sys_id, '');
-		}
+	current.update();
 
+
+	function checkEvaluation(employee, year){
+
+		if(!employee.active)
+			return employee.getDisplayValue() + ' is inactive, PDR creation skipped';
+
+		var master = new PDRMaster();
+
+		//Verify if employee has an existing PDR on the same year
+		var pdr = new GlideRecord('x_pdm_pdr_evaluation');
+		pdr.addQuery('employee', employee);
+		pdr.addQuery('parent.year', year);
+		pdr.query();
+		if(!pdr.hasNext()){
+			master.createEvaluation(employee, current.sys_id);
+			return '';
+		}else
+			return	employee.getDisplayValue() + ' already has an evaluation in ' + year + ', PDR creation skipped to avoid duplicates';
 	}
 
 })(current, previous);]]></script>
@@ -86,8 +81,8 @@
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>267cd74813390bc0995fb6d96144b03a</sys_id>
-        <sys_mod_count>4</sys_mod_count>
-        <sys_name>Create related PDRs</sys_name>
+        <sys_mod_count>6</sys_mod_count>
+        <sys_name>(PDR) Create related PDRs</sys_name>
         <sys_overrides/>
         <sys_package display_value="Performance &amp; Development Review" source="x_pdm_pdr">5c227acc13b50bc0995fb6d96144b0f9</sys_package>
         <sys_policy/>
@@ -95,7 +90,7 @@
         <sys_scope display_value="Performance &amp; Development Review">5c227acc13b50bc0995fb6d96144b0f9</sys_scope>
         <sys_update_name>sys_script_267cd74813390bc0995fb6d96144b03a</sys_update_name>
         <sys_updated_by>jonathanv_adm</sys_updated_by>
-        <sys_updated_on>2017-10-11 13:07:26</sys_updated_on>
+        <sys_updated_on>2018-08-28 05:26:32</sys_updated_on>
         <template/>
         <when>after</when>
     </sys_script>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_email_layout">
+    <sys_email_layout action="INSERT_OR_UPDATE">
+        <advanced>false</advanced>
+        <advanced_layout/>
+        <description/>
+        <layout><![CDATA[<table style="background-color: #eeeeee;" width="100%" cellspacing="0" cellpadding="0" border="0">
+<tbody>
+<tr>
+<td>
+<table class="email-container" style="margin-left: auto; margin-right: auto; padding-top: 20px;" width="680" cellspacing="0" cellpadding="0" border="0">
+<tbody>
+<tr style="background-color: #005596;">
+<td>
+<table width="100%" cellspacing="0" cellpadding="0" border="0">
+<tbody>
+<tr>
+<td><img style="display: block;" src="sys_attachment.do?sys_id=b4a9e59013ba97006b3330128144b08c" /></td>
+<td>
+<h1 style="color: #ffffff; text-transform: uppercase; margin: 0; line-height: 1.05; font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 22px;">Performance &amp; Development Review</h1>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr>
+<td style="padding: 15px 20px 15px 20px; background-color: #ffffff; font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; padding-top: 25px;">${notification:body}</td>
+</tr>
+<tr>
+<td style="color: #455464; text-align: center; font-size: 12px; padding: 15px 20px 15px 20px;">${NOTIF_UNSUB} | ${NOTIF_PREFS+link_text="Manage Preferences"}</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+<p></p>]]></layout>
+        <name>PDR - General Layout</name>
+        <sys_class_name>sys_email_layout</sys_class_name>
+        <sys_created_by>jonathanv_adm</sys_created_by>
+        <sys_created_on>2018-06-15 17:07:38</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>2d2f511413ba97006b3330128144b095</sys_id>
+        <sys_mod_count>15</sys_mod_count>
+        <sys_name>PDR - General Layout</sys_name>
+        <sys_package display_value="Performance &amp; Development Review" source="x_pdm_pdr">5c227acc13b50bc0995fb6d96144b0f9</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Performance &amp; Development Review">5c227acc13b50bc0995fb6d96144b0f9</sys_scope>
+        <sys_update_name>sys_email_layout_2d2f511413ba97006b3330128144b095</sys_update_name>
+        <sys_updated_by>jonathanv_adm</sys_updated_by>
+        <sys_updated_on>2018-06-15 19:51:12</sys_updated_on>
+    </sys_email_layout>
+</record_update>

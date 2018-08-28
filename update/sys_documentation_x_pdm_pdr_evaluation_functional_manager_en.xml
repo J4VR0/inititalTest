@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+    <sys_documentation element="functional_manager" label="Manager (Dotted Line)" language="en" table="x_pdm_pdr_evaluation">
+        <sys_documentation action="INSERT_OR_UPDATE">
+            <element>functional_manager</element>
+            <help/>
+            <hint/>
+            <label>Manager (Dotted Line)</label>
+            <language>en</language>
+            <name>x_pdm_pdr_evaluation</name>
+            <plural>Manager (Dotted Line)</plural>
+            <sys_class_name>sys_documentation</sys_class_name>
+            <sys_created_by>jonathanv_adm</sys_created_by>
+            <sys_created_on>2018-08-15 19:07:09</sys_created_on>
+            <sys_customer_update>false</sys_customer_update>
+            <sys_id>46174804138ce3006b3330128144b0d2</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>Manager (Dotted Line)</sys_name>
+            <sys_package display_value="Performance &amp; Development Review" source="x_pdm_pdr">5c227acc13b50bc0995fb6d96144b0f9</sys_package>
+            <sys_policy/>
+            <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+            <sys_scope display_value="Performance &amp; Development Review">5c227acc13b50bc0995fb6d96144b0f9</sys_scope>
+            <sys_update_name>sys_documentation_x_pdm_pdr_evaluation_functional_manager_en</sys_update_name>
+            <sys_updated_by>jonathanv_adm</sys_updated_by>
+            <sys_updated_on>2018-08-15 19:07:09</sys_updated_on>
+            <url/>
+            <url_target/>
+        </sys_documentation>
+    </sys_documentation>
+</record_update>
